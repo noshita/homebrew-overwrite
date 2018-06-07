@@ -54,6 +54,7 @@ class Pcl < Formula
       -DBUILD_outofcore:BOOL=AUTO_OFF
       -DBUILD_people:BOOL=AUTO_OFF
       -DBUILD_simulation:BOOL=AUTO_OFF
+      -DBUILD_surface_on_nurbs:BOOL=ON
       -DWITH_CUDA:BOOL=OFF
       -DWITH_DOCS:BOOL=OFF
       -DWITH_QT:BOOL=FALSE
