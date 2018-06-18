@@ -33,9 +33,9 @@ class Wine < Formula
   end
 
   devel do
-    url "https://dl.winehq.org/wine/source/3.x/wine-3.9.tar.xz"
-    mirror "https://downloads.sourceforge.net/project/wine/Source/wine-3.9.tar.xz"
-    sha256 "ccadc281966d5a94f1161dec22d29bf7bd6506b371b26f18f652d374e986b735"
+    url "https://dl.winehq.org/wine/source/3.x/wine-3.10.tar.xz"
+    mirror "https://downloads.sourceforge.net/project/wine/Source/wine-3.10.tar.xz"
+    sha256 "d7505cc79c7cd8950f1a46ecfcc0ae2ecc71717ce85414846264395b1e7ac6b5"
 
     resource "mono" do
       url "https://dl.winehq.org/wine/wine-mono/4.7.1/wine-mono-4.7.1.msi", :using => :nounzip
@@ -250,7 +250,7 @@ class Wine < Formula
             #ifdef __#{arch}__
             #{(Pathname.pwd/"build-#{arch}/opensslconf.h").read}
             #endif
-            EOS
+          EOS
         end
         (libexec/"include/openssl/opensslconf.h").atomic_write confs.join("\n")
       end
@@ -472,7 +472,7 @@ class Wine < Formula
   def caveats; <<~EOS
     You may also want winetricks:
       brew install winetricks
-    EOS
+  EOS
   end
 
   test do
