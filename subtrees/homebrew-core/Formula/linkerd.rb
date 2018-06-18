@@ -1,8 +1,8 @@
 class Linkerd < Formula
   desc "Drop-in RPC proxy designed for microservices"
   homepage "https://linkerd.io/"
-  url "https://github.com/linkerd/linkerd/releases/download/1.4.1/linkerd-1.4.1.tgz"
-  sha256 "fcc3b6620d8820dc8a387bd615b517109232a090fe851d72d04732bdb019cc3f"
+  url "https://github.com/linkerd/linkerd/releases/download/1.4.3/linkerd-1.4.3.tgz"
+  sha256 "93c0b00c16a4b7ad6606910153cf216c0a96bb836edb6cbebfbad78b13b89a2a"
 
   bottle :unneeded
 
@@ -55,7 +55,7 @@ class Linkerd < Formula
         <string>#{var}/log/linkerd/linkerd.log</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do
