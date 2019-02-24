@@ -1,14 +1,14 @@
 class ContainerDiff < Formula
   desc "Diff your Docker containers"
   homepage "https://github.com/GoogleContainerTools/container-diff"
-  url "https://github.com/GoogleContainerTools/container-diff/archive/v0.10.0.tar.gz"
-  sha256 "55b62ee0081b9ef5bf5778a6ea30b61f2ee6ee16bfaa7b26bae793455486cc2c"
+  url "https://github.com/GoogleContainerTools/container-diff/archive/v0.15.0.tar.gz"
+  sha256 "4bdd73a81b6f7a988cf270236471016525d0541f5fe04286043f3db28e4b250c"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "755d9916daee6ca4896632b469c81ec81a5499442170832b27be48e9e5827512" => :high_sierra
-    sha256 "8ca23f36cae8664496b98ae89b76f02a30845a524712a5f4ec0781571a803b84" => :sierra
-    sha256 "f18a40fbbe48824f1316343fc0a00372ba002a20ca4ffa68f0b0e7264d23ce70" => :el_capitan
+    sha256 "31af3976b5c63927f934d3155de81d6b6a241bae7244d103012d0d7cbfbeded7" => :mojave
+    sha256 "6002efa7d3d475f95c9bec04896e338a99da5bd333f6fc0ccd20ca80eb6e9726" => :high_sierra
+    sha256 "20eeaca03031026c546e493be1fc57560f9495f621526dae1c07fd4ac5f5d189" => :sierra
   end
 
   depends_on "go" => :build

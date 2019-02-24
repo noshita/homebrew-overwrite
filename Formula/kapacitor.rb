@@ -2,15 +2,15 @@ class Kapacitor < Formula
   desc "Open source time series data processor"
   homepage "https://github.com/influxdata/kapacitor"
   url "https://github.com/influxdata/kapacitor.git",
-      :tag => "v1.5.0",
-      :revision => "4f10efc41b4dcac070495cf95ba2c41cfcc2aa3a"
+      :tag      => "v1.5.2",
+      :revision => "3086452d00830e01d932838d8c6d1df818648ad3"
   head "https://github.com/influxdata/kapacitor.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "b263a69c8dbf4317a5cc9a1057fb084d7aa8703aef74080662021d446d60a2e1" => :high_sierra
-    sha256 "2847c38f6bedba0749516563129d32676e71261a4083ead32cb07794e2dd91a0" => :sierra
-    sha256 "9ecf350daf920ac6ce487401d1d895664920426c3fb2e4595544af5fb59ce810" => :el_capitan
+    sha256 "44ba2e5cd5045717759cde7c82e7752eca277f80a49ffc653ef35819fd153678" => :mojave
+    sha256 "5f982cb2044276f9041453ef8a0b15120bf1f180eb5fff9794173d2d5a6027fc" => :high_sierra
+    sha256 "09136286c7d4c14c9bdc8a684e6d45ffff0750049fe30dd75dd45cbbb9e19e53" => :sierra
   end
 
   depends_on "go" => :build
@@ -19,8 +19,8 @@ class Kapacitor < Formula
     ENV["GOPATH"] = buildpath
     kapacitor_path = buildpath/"src/github.com/influxdata/kapacitor"
     kapacitor_path.install Dir["*"]
-    revision = `git rev-parse HEAD`.strip
-    version = `git describe --tags`.strip
+    revision = Utils.popen_read("git rev-parse HEAD").strip
+    version = Utils.popen_read("git describe --tags").strip
 
     cd kapacitor_path do
       system "go", "install",

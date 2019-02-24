@@ -1,21 +1,22 @@
 class Mongoose < Formula
   desc "Web server build on top of Libmongoose embedded library"
   homepage "https://github.com/cesanta/mongoose"
-  url "https://github.com/cesanta/mongoose/archive/6.11.tar.gz"
-  sha256 "74ee598bb0eba87780becb56586e4342d1b9a85282c53a11cb5ef87d2b66256b"
+  url "https://github.com/cesanta/mongoose/archive/6.13.tar.gz"
+  sha256 "ec7956b8f2845f6c22e19ab38a0c32c9b379087f0038c7db661b34812f225911"
 
   bottle do
     cellar :any
-    sha256 "569e2ff5b7d5864e3133ac6b5d941f5681006d06b8506b4fee1ac1cfc514ff74" => :high_sierra
-    sha256 "12e2cdc336a00a9798bd2bc5e278a39ac30fc93055490e3faf069aff1690a7d8" => :sierra
-    sha256 "788bd2c11b0edf968e786cb4869b8ca383df694f868c81cc269ca2f3eb7fc5f7" => :el_capitan
+    sha256 "00e7662046f84e6e48ddecf56f471bd7c2a5acdbcc919ead7c5457a1126617dd" => :mojave
+    sha256 "a98aaf1726ab5402dc2ccd1418f71b32f0c4034f4be4dc8f3a93257b7d9113fb" => :high_sierra
+    sha256 "4960b6b0cb836bca2c4d5ff925dfbd6d09d8952c239cbc912200d5c509c5cec5" => :sierra
   end
 
-  depends_on "openssl" => :recommended
+  depends_on "openssl"
+
+  conflicts_with "suite-sparse", :because => "suite-sparse vendors libmongoose.dylib"
 
   def install
     # No Makefile but is an expectation upstream of binary creation
-    # https://github.com/cesanta/mongoose/blob/master/docs/Usage.md
     # https://github.com/cesanta/mongoose/issues/326
     cd "examples/simplest_web_server" do
       system "make"

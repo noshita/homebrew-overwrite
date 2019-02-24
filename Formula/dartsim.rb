@@ -1,14 +1,13 @@
 class Dartsim < Formula
   desc "Dynamic Animation and Robotics Toolkit"
   homepage "https://dartsim.github.io/"
-  url "https://github.com/dartsim/dart/archive/v6.5.0.tar.gz"
-  sha256 "b4c7f4d800ae5696e6ada04bd91b299f4a5e4ff9e8e07deeed79c6923747e274"
-  revision 1
+  url "https://github.com/dartsim/dart/archive/v6.7.2.tar.gz"
+  sha256 "ddbad97af41730ac084ab87153614a13bd6f17ae98e192a994eee0a466746ed7"
 
   bottle do
-    sha256 "92be7a73b58ee7e90dd8556eb040527d3902bc7f96f074c240f1a2f7340b2e2e" => :high_sierra
-    sha256 "535bf09f0b7bc6145ee9a582acf9cace765c631273b54c022a5e7ccaeb65e936" => :sierra
-    sha256 "6437c45476c48b2a7b7c2a94166cdce72e85c4756c2110fc164912faf6aad776" => :el_capitan
+    sha256 "170fdec69d1d6e217cab43d1fca384453b9d34daca6fe072a073553406e95fd1" => :mojave
+    sha256 "0b10cb797219b5d137f9489b5622da70a87c90d67e490d93bb625476e49428c4" => :high_sierra
+    sha256 "e220c3dfdb7b3dcc546d77050efa862050e3986237be2349237feafc20cf5831" => :sierra
   end
 
   depends_on "cmake" => :build
@@ -19,7 +18,6 @@ class Dartsim < Formula
   depends_on "eigen"
   depends_on "fcl"
   depends_on "flann"
-  depends_on "freeglut"
   depends_on "libccd"
   depends_on "nlopt"
   depends_on "ode"
@@ -27,11 +25,12 @@ class Dartsim < Formula
   depends_on "tinyxml2"
   depends_on "urdfdom"
 
-  needs :cxx11
-
   def install
     ENV.cxx11
-    system "cmake", ".", *std_cmake_args
+
+    # Force to link to system GLUT (see: https://cmake.org/Bug/view.php?id=16045)
+    system "cmake", ".", "-DGLUT_glut_LIBRARY=/System/Library/Frameworks/GLUT.framework",
+                         *std_cmake_args
     system "make", "install"
   end
 
@@ -46,7 +45,9 @@ class Dartsim < Formula
     EOS
     system ENV.cxx, "test.cpp", "-I#{Formula["eigen"].include}/eigen3",
                     "-I#{include}", "-L#{lib}", "-ldart",
-                    "-lassimp", "-lboost_system", "-std=c++11", "-o", "test"
+                    "-L#{Formula["assimp"].opt_lib}", "-lassimp",
+                    "-L#{Formula["boost"].opt_lib}", "-lboost_system",
+                    "-std=c++11", "-o", "test"
     system "./test"
   end
 end

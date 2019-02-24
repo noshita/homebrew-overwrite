@@ -1,14 +1,14 @@
 class Ace < Formula
   desc "ADAPTIVE Communication Environment: OO network programming in C++"
   homepage "https://www.dre.vanderbilt.edu/~schmidt/ACE.html"
-  url "http://download.dre.vanderbilt.edu/previous_versions/ACE-6.5.0.tar.bz2"
-  sha256 "dbfbb6b7747de2c5de101403b1ccd7b673ea5a31e7492504467070b98ef5f357"
+  url "https://github.com/DOCGroup/ACE_TAO/releases/download/ACE%2BTAO-6_5_4/ACE-6.5.4.tar.bz2"
+  sha256 "66cfc68d1663dbd7a715d05632db5c0671a96706b6c9389d2d604e3ec5254563"
 
   bottle do
     cellar :any
-    sha256 "21f2d6566dddbd11c6d74d5f7afd6636c3fbf39a8f652e2de8843f46f9b193db" => :high_sierra
-    sha256 "200e8d6a25948571de99c4ec163357e790e5450b4293161659260f8ca259324f" => :sierra
-    sha256 "6c6b235b55090f49aa237599e01b325bdfb84585f232b4ff78f28b616f3ec290" => :el_capitan
+    sha256 "dabec69bf7e2dfdca43438bae5d46745433c89fe9da7f05e83d7d5223829bfdd" => :mojave
+    sha256 "573149b5895a410dd4f5b22887e690d00d8bed8636798720df13e0b7c247e860" => :high_sierra
+    sha256 "62a169d5d0016e94bad130e0f24eb7be044e8c52b63e269b2bce2d4fbaf17776" => :sierra
   end
 
   def install

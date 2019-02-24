@@ -1,47 +1,32 @@
 class Uwsgi < Formula
   desc "Full stack for building hosting services"
   homepage "https://uwsgi-docs.readthedocs.org/en/latest/"
-  url "https://projects.unbit.it/downloads/uwsgi-2.0.17.tar.gz"
-  sha256 "3dc2e9b48db92b67bfec1badec0d3fdcc0771316486c5efa3217569da3528bf2"
   head "https://github.com/unbit/uwsgi.git"
 
-  bottle do
-    sha256 "c42839806ac4d5e1bcf9348909cb2012284ef20f69e646981ad11fb5bf9448d1" => :high_sierra
-    sha256 "87b5877671e1b1dd1c7aebe3dca1c2068e40d68c4f922de0610fae4b88a52f97" => :sierra
-    sha256 "33a07fe69d0831fa4eb6e601ec2e406ef059bbe7984badd3ad855eab6efb039b" => :el_capitan
+  stable do
+    url "https://projects.unbit.it/downloads/uwsgi-2.0.17.1.tar.gz"
+    sha256 "d2318235c74665a60021a4fc7770e9c2756f9fc07de7b8c22805efe85b5ab277"
+
+    # Fix "library not found for -lgcc_s.10.5" with 10.14 SDK
+    # Remove in next release
+    patch do
+      url "https://github.com/unbit/uwsgi/commit/6b1b397f.diff?full_index=1"
+      sha256 "b2c3a22f980a4e3bd2ab2fe5c5356d8a91e567a3ab3e6ccbeeeb2ba4efe4568a"
+    end
   end
 
-  option "with-java", "Compile with Java support"
-  option "with-ruby", "Compile with Ruby support"
-
-  deprecated_option "with-lua51" => "with-lua@5.1"
-  deprecated_option "with-python3" => "with-python"
+  bottle do
+    rebuild 2
+    sha256 "aa95c6aa7628d8b24c4b39fe57a7eef5e8d8ee87e213d8cfc14847bacc344995" => :mojave
+    sha256 "90a83b0aaf8f43ca1ca0374fc6df91ca1263e48261fa0dc5df80783006d70734" => :high_sierra
+    sha256 "cede48b191857733597fee22d494426cffe2127cadca87b07595c8d40d163aef" => :sierra
+  end
 
   depends_on "pkg-config" => :build
-  depends_on "pcre"
   depends_on "openssl"
+  depends_on "pcre"
   depends_on "python@2"
-
-  depends_on "geoip" => :optional
-  depends_on "gloox" => :optional
-  depends_on "go" => [:build, :optional]
-  depends_on "jansson" => :optional
-  depends_on "libffi" => :optional
-  depends_on "libxslt" => :optional
-  depends_on "libyaml" => :optional
-  depends_on "lua@5.1" => :optional
-  depends_on "mongodb" => :optional
-  depends_on "mongrel2" => :optional
-  depends_on "mono" => :optional
-  depends_on "nagios" => :optional
-  depends_on "postgresql" => :optional
-  depends_on "python" => :optional
-  depends_on "rrdtool" => :optional
-  depends_on "rsyslog" => :optional
-  depends_on "tcc" => :optional
-  depends_on "v8" => :optional
-  depends_on "zeromq" => :optional
-  depends_on "yajl" if build.without? "jansson"
+  depends_on "yajl"
 
   # "no such file or directory: '... libpython2.7.a'"
   # Reported 23 Jun 2016: https://github.com/unbit/uwsgi/issues/1299
@@ -62,15 +47,12 @@ class Uwsgi < Formula
     ENV.prepend "CFLAGS", "-I#{openssl.opt_include}"
     ENV.prepend "LDFLAGS", "-L#{openssl.opt_lib}"
 
-    json = build.with?("jansson") ? "jansson" : "yajl"
-    yaml = build.with?("libyaml") ? "libyaml" : "embedded"
-
     (buildpath/"buildconf/brew.ini").write <<~EOS
       [uwsgi]
       ssl = true
-      json = #{json}
+      json = yajl
       xml = libxml2
-      yaml = #{yaml}
+      yaml = embedded
       inherit = base
       plugin_dir = #{libexec}/uwsgi
       embedded_plugins = null
@@ -95,42 +77,15 @@ class Uwsgi < Formula
                  transformation_offload transformation_tofile
                  transformation_toupper ugreen webdav zergpool]
 
-    plugins << "alarm_xmpp" if build.with? "gloox"
-    plugins << "emperor_mongodb" if build.with? "mongodb"
-    plugins << "emperor_pg" if build.with? "postgresql"
-    plugins << "ffi" if build.with? "libffi"
-    plugins << "fiber" if build.with? "ruby"
-    plugins << "gccgo" if build.with? "go"
-    plugins << "geoip" if build.with? "geoip"
-    plugins << "jvm" if build.with? "java"
-    plugins << "jwsgi" if build.with? "java"
-    plugins << "libtcc" if build.with? "tcc"
-    plugins << "lua" if build.with? "lua@5.1"
-    plugins << "mongodb" if build.with? "mongodb"
-    plugins << "mongodblog" if build.with? "mongodb"
-    plugins << "mongrel2" if build.with? "mongrel2"
-    plugins << "mono" if build.with? "mono"
-    plugins << "nagios" if build.with? "nagios"
-    plugins << "rack" if build.with? "ruby"
-    plugins << "rbthreads" if build.with? "ruby"
-    plugins << "ring" if build.with? "java"
-    plugins << "rrdtool" if build.with? "rrdtool"
-    plugins << "rsyslog" if build.with? "rsyslog"
-    plugins << "servlet" if build.with? "java"
-    plugins << "stats_pusher_mongodb" if build.with? "mongodb"
-    plugins << "v8" if build.with? "v8"
-    plugins << "xslt" if build.with? "libxslt"
-
     (libexec/"uwsgi").mkpath
     plugins.each do |plugin|
       system "python", "uwsgiconfig.py", "--verbose", "--plugin", "plugins/#{plugin}", "brew"
     end
 
     python_versions = {
-      "python"=>"python2.7",
-      "python2"=>"python2.7",
+      "python"  => "python2.7",
+      "python2" => "python2.7",
     }
-    python_versions["python3"] = "python3" if build.with? "python"
     python_versions.each do |k, v|
       system v, "uwsgiconfig.py", "--verbose", "--plugin", "plugins/python", "brew", k
     end

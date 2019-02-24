@@ -1,26 +1,24 @@
 class Arangodb < Formula
   desc "The Multi-Model NoSQL Database"
   homepage "https://www.arangodb.com/"
-  url "https://download.arangodb.com/Source/ArangoDB-3.3.10.tar.gz"
-  sha256 "6facc491cb5469e4c04ca8157484adf9f93e2e092b7aaf1deb5ee4278ab38a0e"
+  url "https://download.arangodb.com/Source/ArangoDB-3.4.0.tar.gz"
+  sha256 "5e45fa2f5eff8420a2e3e083535663a21ab06bc66fa29857d6cd4e36ed4c4aff"
   head "https://github.com/arangodb/arangodb.git", :branch => "unstable"
 
   bottle do
-    sha256 "eb756d602a258ccf439d30058064eaaa9936d41b80d0338673ea4fa82e6bfd15" => :high_sierra
-    sha256 "b222d60afb8a83d001f9da59b59943bc568ebb083127b9b1ac4d84d205bd19cc" => :sierra
-    sha256 "81d57bea1d8e64d824067924609e6305e7cd46d630170206cb49d11d13cf897c" => :el_capitan
+    sha256 "26914e81f2b90c88aa281193f50dcd26ae97ed001185d55b62af70874e11e8fa" => :mojave
+    sha256 "afff87970c8491e5dd0c76f4b6f86f6de92531332aa24cedce29a6cd8a5dcdc8" => :high_sierra
+    sha256 "5346d11d6f89c0247a066e2c277c1c15c151c5b2a66e7cf0ce564277da359b98" => :sierra
   end
 
-  depends_on :macos => :yosemite
   depends_on "cmake" => :build
   depends_on "go" => :build
+  depends_on :macos => :yosemite
   depends_on "openssl"
 
-  needs :cxx11
-
-  fails_with :clang do
-    build 600
-    cause "Fails with compile errors"
+  fails_with :gcc do
+    build 820
+    cause "Generates incorrect code"
   end
 
   def install

@@ -1,15 +1,13 @@
 class Opencv < Formula
   desc "Open source computer vision library"
   homepage "https://opencv.org/"
-  url "https://github.com/opencv/opencv/archive/3.4.1.tar.gz"
-  sha256 "f1b87684d75496a1054405ae3ee0b6573acaf3dad39eaf4f1d66fdd7e03dc852"
-  revision 5
+  url "https://github.com/opencv/opencv/archive/4.0.1.tar.gz"
+  sha256 "7b86a0ee804244e0c407321f895b15e4a7162e9c5c0d2efc85f1cadec4011af4"
 
   bottle do
-    rebuild 2
-    sha256 "f9abd6049e1c5b52ac9dad6b7605bb09fb3936a6da5b8f613546bf6d4d199a1c" => :high_sierra
-    sha256 "2fd9d42ab0c9b3ee736ca60516dfc8224100e8fe2601c88ce7bc860763b7994d" => :sierra
-    sha256 "7fbbf8dde773d2efe29ba7fcbed805db8a1b3201b6b713c917459bb4d59c82cc" => :el_capitan
+    sha256 "73f03c0b70646230276817b41cb8b3901008cffd88350309b008d19285e4a7cf" => :mojave
+    sha256 "5c384dfe3fc7bfa405aac1e25dfc384afb2084030153b195c24581ddac1d39ec" => :high_sierra
+    sha256 "8fb8cf21b549e1f603fc108fd8fee886501a377692feb27f703a629217b47dc0" => :sierra
   end
 
   depends_on "cmake" => :build
@@ -19,17 +17,15 @@ class Opencv < Formula
   depends_on "jpeg"
   depends_on "libpng"
   depends_on "libtiff"
+  depends_on "numpy"
   depends_on "openexr"
   depends_on "python"
   depends_on "python@2"
-  depends_on "numpy"
   depends_on "tbb"
 
-  needs :cxx11
-
   resource "contrib" do
-    url "https://github.com/opencv/opencv_contrib/archive/3.4.1.tar.gz"
-    sha256 "298c69ee006d7675e1ff9d371ba8b0d9e7e88374bb7ba0f9d0789851d352ec6e"
+    url "https://github.com/opencv/opencv_contrib/archive/4.0.1.tar.gz"
+    sha256 "0d8acbad4b7074cfaafd906a7419c23629179d5e98894714402090b192ef8237"
   end
 
   def install
@@ -63,6 +59,7 @@ class Opencv < Formula
       -DBUILD_opencv_text=OFF
       -DOPENCV_ENABLE_NONFREE=ON
       -DOPENCV_EXTRA_MODULES_PATH=#{buildpath}/opencv_contrib/modules
+      -DOPENCV_GENERATE_PKGCONFIG=ON
       -DWITH_1394=OFF
       -DWITH_CUDA=OFF
       -DWITH_EIGEN=ON
@@ -85,9 +82,17 @@ class Opencv < Formula
       -DPYTHON3_INCLUDE_DIR=#{py3_include}
     ]
 
-    if build.bottle?
-      args += %w[-DENABLE_SSE41=OFF -DENABLE_SSE42=OFF -DENABLE_AVX=OFF
-                 -DENABLE_AVX2=OFF]
+    # The compiler on older Mac OS cannot build some OpenCV files using AVX2
+    # extensions, failing with errors such as
+    # "error: use of undeclared identifier '_mm256_cvtps_ph'"
+    # Work around this by not trying to build AVX2 code.
+    if MacOS.version <= :yosemite
+      args << "-DCPU_DISPATCH=SSE4_1,SSE4_2,AVX"
+    end
+
+    args << "-DENABLE_AVX=OFF" << "-DENABLE_AVX2=OFF"
+    unless MacOS.version.requires_sse42?
+      args << "-DENABLE_SSE41=OFF" << "-DENABLE_SSE42=OFF"
     end
 
     mkdir "build" do
@@ -104,14 +109,15 @@ class Opencv < Formula
 
   test do
     (testpath/"test.cpp").write <<~EOS
-      #include <opencv/cv.h>
+      #include <opencv2/opencv.hpp>
       #include <iostream>
       int main() {
         std::cout << CV_VERSION << std::endl;
         return 0;
       }
     EOS
-    system ENV.cxx, "test.cpp", "-I#{include}", "-L#{lib}", "-o", "test"
+    system ENV.cxx, "-std=c++11", "test.cpp", "-I#{include}/opencv4",
+                    "-o", "test"
     assert_equal `./test`.strip, version.to_s
 
     ["python2.7", "python3"].each do |python|

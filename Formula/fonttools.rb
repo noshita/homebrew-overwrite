@@ -3,21 +3,18 @@ class Fonttools < Formula
 
   desc "Library for manipulating fonts"
   homepage "https://github.com/fonttools/fonttools"
-  url "https://github.com/fonttools/fonttools/releases/download/3.27.1/fonttools-3.27.1.zip"
-  sha256 "a81b57be6c9b556065d7f67a9ba4eb050c5074590f933d4902cd6ef331865aee"
+  url "https://github.com/fonttools/fonttools/releases/download/3.38.0/fonttools-3.38.0.zip"
+  sha256 "90d6a51a512e69daa3dbf1e418911ed5939447b02827bd42ee6feaa3c7bc318b"
   head "https://github.com/fonttools/fonttools.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "e97c8b9398a87e56a2e6fa3ab02f194add28c8e3dcd349dd6b6e9d88bc718e13" => :high_sierra
-    sha256 "4399c50d97947a4922b1fd01012816e7d8ea9fd737cc620d5b25c4b6f2d3f0ff" => :sierra
-    sha256 "bc866f3936e0f98b3794550eddffe80d3622df2644bc4a4245d212dceb49d3ac" => :el_capitan
+    sha256 "cb9a3f0516ec5f72349411ec5d7c9bf8589a8b3b72d0450a86105beec402a9a3" => :mojave
+    sha256 "45954f4cbdaecbd6370ed1733ff262a61f15b292e6919584d6b83cb09c4001de" => :high_sierra
+    sha256 "404d6fd4e3ddd02962f74c6b25894cc6749646a02ea17ff3dfddfafb77efd810" => :sierra
   end
 
-  option "with-pygtk", "Build with pygtk support for pyftinspect"
-
-  depends_on "python@2"
-  depends_on "pygtk" => :optional
+  depends_on "python"
 
   def install
     virtualenv_install_with_resources

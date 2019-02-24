@@ -1,22 +1,23 @@
 class Cointop < Formula
   desc "Interactive terminal based UI application for tracking cryptocurrencies"
   homepage "https://cointop.sh"
-  url "https://github.com/miguelmota/cointop/archive/1.0.5.tar.gz"
-  sha256 "2c780c3fe7fa7dd0d51ad0f0d1b1b7b7ee3f8365b9605ab73f21557e72077d78"
+  url "https://github.com/miguelmota/cointop/archive/1.1.2.tar.gz"
+  sha256 "69070f6b610f31f64245052910b4bd940a3e722f7326e7959c95f47ebe1c38ba"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "665b0e10d72ad4b839865e1cb1a49cbf9b5a0df2a630957967b6542b884b5d4d" => :high_sierra
-    sha256 "2f3ad7d0d3354630ab90c5241092af452e62f5c2a3ec9ccad6c03cf3e99dc232" => :sierra
-    sha256 "c33295abaa7b47984059617f8490f92b06158744f16176aed1b3987a9791b164" => :el_capitan
+    sha256 "e0c4f46d2bc2910a7fd5866a57738106e07eadfae20aebd59661e03385829ab8" => :mojave
+    sha256 "a88422c7be92ecaf8a0683f9c15a0c335503cab244962372f59d66fa71864cbb" => :high_sierra
+    sha256 "61afdc62170ab00c9c12133e3e90d0f1168b6792cef7e26d23337f86aec8bd74" => :sierra
   end
 
   depends_on "go" => :build
 
   def install
     ENV["GOPATH"] = buildpath
-    (buildpath/"src/github.com/miguelmota/cointop").install buildpath.children
-    cd "src/github.com/miguelmota/cointop" do
+    src = buildpath/"src/github.com/miguelmota/cointop"
+    src.install buildpath.children
+    src.cd do
       system "go", "build", "-o", bin/"cointop"
       prefix.install_metafiles
     end

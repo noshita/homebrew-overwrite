@@ -1,15 +1,16 @@
 class Octave < Formula
   desc "High-level interpreted language for numerical computing"
   homepage "https://www.gnu.org/software/octave/index.html"
-  url "https://ftp.gnu.org/gnu/octave/octave-4.4.0.tar.gz"
-  mirror "https://ftpmirror.gnu.org/octave/octave-4.4.0.tar.gz"
-  sha256 "72f846379fcec7e813d46adcbacd069d72c4f4d8f6003bcd92c3513aafcd6e96"
-  revision 1
+  url "https://ftp.gnu.org/gnu/octave/octave-4.4.1.tar.xz"
+  mirror "https://ftpmirror.gnu.org/octave/octave-4.4.1.tar.xz"
+  sha256 "7e4e9ac67ed809bd56768fb69807abae0d229f4e169db63a37c11c9f08215f90"
+  revision 5
 
   bottle do
-    sha256 "9229aecdfaa4539e9954e234e0d4af6e13b1930d482af464e4e75d6ad2987c19" => :high_sierra
-    sha256 "ac0be47ccbf61b6451aae5d98ba3f02e1ffd7a9cd264083e4751cc99877a6bb3" => :sierra
-    sha256 "8868b5feec8daeb3266df99f99c3ea303e8ba22d95adc4a8257571473cd6ac21" => :el_capitan
+    rebuild 1
+    sha256 "b28615ae5e36a3d3202256305cba518f39de19bebb6a9635f8acfe868c67a3aa" => :mojave
+    sha256 "266fbf84557ec6c4d9d672143ced419d29af3b83827aba7df191bc567ba13ba1" => :high_sierra
+    sha256 "7af138a36e98c7adbb8ab2a7dc6e39dd60f28ae2b1524d8b5ff433958304af34" => :sierra
   end
 
   head do
@@ -24,7 +25,7 @@ class Octave < Formula
 
   # Complete list of dependencies at https://wiki.octave.org/Building
   depends_on "gnu-sed" => :build # https://lists.gnu.org/archive/html/octave-maintainers/2016-09/msg00193.html
-  depends_on :java => ["1.6+", :build, :test]
+  depends_on :java => ["1.6+", :build]
   depends_on "pkg-config" => :build
   depends_on "arpack"
   depends_on "epstool"
@@ -47,6 +48,7 @@ class Octave < Formula
   depends_on "pstoedit"
   depends_on "qhull"
   depends_on "qrupdate"
+  depends_on "qt"
   depends_on "readline"
   depends_on "suite-sparse"
   depends_on "sundials"
@@ -60,7 +62,13 @@ class Octave < Formula
     # Default configuration passes all linker flags to mkoctfile, to be
     # inserted into every oct/mex build. This is unnecessary and can cause
     # cause linking problems.
-    inreplace "src/mkoctfile.in.cc", /%OCTAVE_CONF_OCT(AVE)?_LINK_(DEPS|OPTS)%/, '""'
+    inreplace "src/mkoctfile.in.cc",
+              /%OCTAVE_CONF_OCT(AVE)?_LINK_(DEPS|OPTS)%/,
+              '""'
+
+    # Qt 5.12 compatibility
+    # https://savannah.gnu.org/bugs/?55187
+    ENV["QCOLLECTIONGENERATOR"] = "qhelpgenerator"
 
     system "./bootstrap" if build.head?
     system "./configure", "--prefix=#{prefix}",
@@ -69,8 +77,6 @@ class Octave < Formula
                           "--enable-link-all-dependencies",
                           "--enable-shared",
                           "--disable-static",
-                          "--without-osmesa",
-                          "--without-qt",
                           "--with-hdf5-includedir=#{Formula["hdf5"].opt_include}",
                           "--with-hdf5-libdir=#{Formula["hdf5"].opt_lib}",
                           "--with-x=no",
@@ -96,7 +102,5 @@ class Octave < Formula
     system bin/"octave", "--eval", "(22/7 - pi)/pi"
     # This is supposed to crash octave if there is a problem with veclibfort
     system bin/"octave", "--eval", "single ([1+i 2+i 3+i]) * single ([ 4+i ; 5+i ; 6+i])"
-    # Test java bindings: check if javaclasspath is working, return error if not
-    system bin/"octave", "--eval", "try; javaclasspath; catch; quit(1); end;"
   end
 end

@@ -5,18 +5,16 @@ class Vault < Formula
   desc "Secures, stores, and tightly controls access to secrets"
   homepage "https://vaultproject.io/"
   url "https://github.com/hashicorp/vault.git",
-      :tag => "v0.10.2",
-      :revision => "3ee0802ed08cb7f4046c2151ec4671a076b76166"
+      :tag      => "v1.0.2",
+      :revision => "37a1dc9c477c1c68c022d2084550f25bf20cac33"
   head "https://github.com/hashicorp/vault.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "dc897767e02b1be83d87c086210bed3ada83b72a348c3be56e0faa38c2bbbf27" => :high_sierra
-    sha256 "44c4f8b14b8ccb0b594af848f03a741952f6b2911358f4df0f3e01da78925c93" => :sierra
-    sha256 "8d93d8e5f46152ec36ba53130d5ca7bb25cec494c9244e42c136800b5d929ebd" => :el_capitan
+    sha256 "f1f73bb67c1af2da00310a9de0e12f0e9adbfc0a582614c3ef72948c311f49e8" => :mojave
+    sha256 "e8e205fa2982842b4caf53a10e1e6a28571c660ccc14343034b7581c76fd028f" => :high_sierra
+    sha256 "1bf49b7e460415b976e05d629d08634a1f652e6a13a6108c3ac6254cf402f0cb" => :sierra
   end
-
-  option "with-dynamic", "Build dynamic binary with CGO_ENABLED=1"
 
   depends_on "go" => :build
   depends_on "gox" => :build
@@ -30,8 +28,7 @@ class Vault < Formula
     (buildpath/"bin").mkpath
 
     cd "src/github.com/hashicorp/vault" do
-      target = build.with?("dynamic") ? "dev-dynamic" : "dev"
-      system "make", target
+      system "make", "dev"
       bin.install "bin/vault"
       prefix.install_metafiles
     end

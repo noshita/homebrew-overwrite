@@ -5,11 +5,10 @@ class AnsibleAT20 < Formula
   sha256 "373a2e50319d90da50948e3faf1c033464b7302200e0199da8981d24646d4387"
   revision 2
 
-  head "https://github.com/ansible/ansible.git", :branch => "stable-2.0"
-
   bottle do
     cellar :any
     rebuild 1
+    sha256 "7f4e6ad0d1987ea253c845e1003033732c810030dbea5fde80331c35cc994539" => :mojave
     sha256 "0cf09f665995cb713b32152f76ac8786c7cd245720b956025d9d9b0ae011d47e" => :high_sierra
     sha256 "9fd845b11d6f144d95fa9e81fb68a4f4e69a31a99c1ed99453abc699945dbead" => :sierra
     sha256 "0649dfc2f9becb403dc019dd9774d191ea5f168db968c9dd2fa60291951cdb78" => :el_capitan
@@ -18,9 +17,9 @@ class AnsibleAT20 < Formula
   keg_only :versioned_formula
 
   depends_on "pkg-config" => :build
-  depends_on "python@2"
   depends_on "libyaml"
   depends_on "openssl"
+  depends_on "python@2" # does not support Python 3
 
   #
   # ansible (core dependencies)

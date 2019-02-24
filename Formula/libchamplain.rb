@@ -6,18 +6,18 @@ class Libchamplain < Formula
   revision 1
 
   bottle do
-    sha256 "f6164d934f20edac3cce56807031c6398ab4135ac2d1de189fa507d53646d4fe" => :high_sierra
-    sha256 "4cd4422e4ea30fb60d77bee37e96d2a221cf78d5cfbb56c7bd4ddff503dd9e63" => :sierra
-    sha256 "77dc11f2f53f414fb94db5a48c60827eeda2d54f296a6608aface2d7d7adcba2" => :el_capitan
+    rebuild 1
+    sha256 "814fdeb025febf6f3571e27a23ea391c84d3b12856db23b446844e8bd99d6f5d" => :mojave
+    sha256 "4a664a6e50104334e5f02ca940ce6571a8883412995b2f94a0eb7de83ffa7c53" => :high_sierra
+    sha256 "1aabe9dd67cb027df58b744f53adebee1c9e92e4b3eebe9d2ea7be3ffa0b4226" => :sierra
   end
 
   depends_on "gobject-introspection" => :build
   depends_on "pkg-config" => :build
   depends_on "clutter"
-  depends_on "libsoup"
-  depends_on "gtk+3"
   depends_on "clutter-gtk"
-  depends_on "vala" => :optional
+  depends_on "gtk+3"
+  depends_on "libsoup"
 
   def install
     system "./configure", "--disable-debug",

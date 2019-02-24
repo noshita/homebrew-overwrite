@@ -1,8 +1,8 @@
 class Rabbitmq < Formula
   desc "Messaging broker"
   homepage "https://www.rabbitmq.com"
-  url "https://dl.bintray.com/rabbitmq/all/rabbitmq-server/3.7.6/rabbitmq-server-generic-unix-3.7.6.tar.xz"
-  sha256 "23e61ec405fea9903c2de9532013feb124a5bc667a43a010c949276eda17e1d4"
+  url "https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.7.12/rabbitmq-server-generic-unix-3.7.12.tar.xz"
+  sha256 "71238df9215d399e6e16bad05b19667bd9c9413526370b8e2e7606c923e14a60"
 
   bottle :unneeded
 
@@ -58,6 +58,7 @@ class Rabbitmq < Formula
     CONFIG_FILE=#{etc}/rabbitmq/rabbitmq
     NODE_IP_ADDRESS=127.0.0.1
     NODENAME=rabbit@localhost
+    RABBITMQ_LOG_BASE=#{var}/log/rabbitmq
   EOS
   end
 
@@ -84,6 +85,10 @@ class Rabbitmq < Formula
           <key>CONF_ENV_FILE</key>
           <string>#{etc}/rabbitmq/rabbitmq-env.conf</string>
         </dict>
+        <key>StandardErrorPath</key>
+        <string>#{var}/log/rabbitmq/std_error.log</string>
+        <key>StandardOutPath</key>
+        <string>#{var}/log/rabbitmq/std_out.log</string>
       </dict>
     </plist>
   EOS

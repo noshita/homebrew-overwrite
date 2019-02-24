@@ -2,19 +2,19 @@ class OpenshiftCli < Formula
   desc "OpenShift command-line interface tools"
   homepage "https://www.openshift.com/"
   url "https://github.com/openshift/origin.git",
-    :tag => "v3.9.0",
-    :revision => "191fece9305a76f262baacc9de72c2c8cb4d5601",
-    :shallow => false
-
+      :tag      => "v3.11.0",
+      :revision => "0cbc58b117403b9d9169dbafdfac59ef104bb997",
+      :shallow  => false
   head "https://github.com/openshift/origin.git"
 
   bottle do
-    sha256 "4bf526a8099ad57cfc6208b45d3854f83b684f7dd7b450bf8478afb6ef5ca912" => :high_sierra
-    sha256 "4f7abe45f4993f6c61e10c199d8a002091c1eb64e494421db6d533a53164f761" => :sierra
-    sha256 "8e43f2b64310d9d38769ebbbc4acc5f6a0ceddc6721f7c3921641f560143dff7" => :el_capitan
+    cellar :any_skip_relocation
+    sha256 "5c5799c73ddfc6f3f88b96ea9e61c76210a3c9ec8c8196c487811a25833873d1" => :mojave
+    sha256 "9ac46b2e32e8802fe54f00843d7edc8d2ad70de5934fd38290e8dff46955302e" => :high_sierra
+    sha256 "9a9273ba88209e9011c33571cdd06ad7fa1cee5aec66f5453b450723863cc894" => :sierra
   end
 
-  depends_on "go@1.9" => :build
+  depends_on "go" => :build
   depends_on "socat"
 
   def install

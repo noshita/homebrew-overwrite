@@ -8,6 +8,7 @@ class Imapsync < Formula
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "af1e8f2905d31aaa1123c9be542ba94bc6e0141f96a8b264e7dea80c6dbd3d5c" => :mojave
     sha256 "b68c9774710e5d3c47b88dcb6df93789c868c2dc29bf2380b4f316d560871498" => :high_sierra
     sha256 "ca33697e25f4b8a971b501ff4e68c52285706dfd450a81525648ebb22058a577" => :sierra
     sha256 "c0518b4b531892a033cb142f6f1c39919953ba61143b5d8bb9661ea7ae8bb294" => :el_capitan
@@ -81,6 +82,7 @@ class Imapsync < Formula
     resources.each do |r|
       r.stage do
         next if build_pl.include? r.name
+
         system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}"
         system "make"
         system "make", "install"
@@ -107,6 +109,7 @@ class Imapsync < Formula
     assert_match version.to_s, output
     resources.each do |r|
       next if ["Module::Build::Tiny", "Readonly", "Sys::MemInfo"].include? r.name
+
       assert_match /#{r.name}\s+#{r.version}/, output
     end
   end

@@ -6,6 +6,7 @@ class Imake < Formula
   revision 4
 
   bottle do
+    sha256 "744bc37ab36128960dc813cf1a07a25cf037595448c869f1ec41151542517419" => :mojave
     sha256 "f7b7121138f0c2d0d5c5dba574143f8c911b4be70538f1dbba4aeebe0dd5773f" => :high_sierra
     sha256 "1341c20e98ef8bd974202df0805c0ca9132eb436ff8e2e06624f1dd4c19094bc" => :sierra
     sha256 "941acafab09fe8afefe785eddce4565827de4f310494f783995b5035d95e5b4a" => :el_capitan
@@ -15,14 +16,14 @@ class Imake < Formula
   depends_on "gcc"
   depends_on :x11
 
-  patch :p0 do
-    url "https://raw.githubusercontent.com/Homebrew/patches/a0bb3a4/imake/patch-imakemdep.h.diff"
-    sha256 "1f7a24f625d2611c31540d4304a45f228767becafa37af01e1695d74e612459e"
-  end
-
   resource "xorg-cf-files" do
     url "https://xorg.freedesktop.org/releases/individual/util/xorg-cf-files-1.0.5.tar.bz2"
     sha256 "ed23b85043edecc38fad4229e0ebdb7ff80b570e746bc03a7c8678d601be7ed4"
+  end
+
+  patch :p0 do
+    url "https://raw.githubusercontent.com/Homebrew/patches/a0bb3a4/imake/patch-imakemdep.h.diff"
+    sha256 "1f7a24f625d2611c31540d4304a45f228767becafa37af01e1695d74e612459e"
   end
 
   def install

@@ -1,14 +1,15 @@
 class Distcc < Formula
   desc "Distributed compiler client and server"
   homepage "https://github.com/distcc/distcc/"
-  url "https://github.com/distcc/distcc/releases/download/v3.3/distcc-3.3.tar.gz"
-  sha256 "125897f848b2dc00cbdb62cf9e618a5e942eb7d70350a2b7b66e741cf3200045"
+  url "https://github.com/distcc/distcc/releases/download/v3.3.2/distcc-3.3.2.tar.gz"
+  sha256 "64894de2970c631801d29c9962553673ea7a1d150e6855d7e166d273fca5cdfc"
   head "https://github.com/distcc/distcc.git"
 
   bottle do
-    sha256 "0856c0e1f163db8d9c41ca4f51938f6d32ad44638a980efa43131869e51817d4" => :high_sierra
-    sha256 "482ab73be29ddb1271c4213389954ba0940e5ca63586b12fcba1e28f500c346c" => :sierra
-    sha256 "24511cc04df2d860c1261b4a194cd0af0742413ff7744ec3adb2d780aed94108" => :el_capitan
+    sha256 "29e22720fd883fa08b9cf4c3dfb05711b47708435cc4d64db95ba53e1e2ad06f" => :mojave
+    sha256 "ba97d2888c977f6a5d51e690cebe27362ebbbef81767c4f349c41d7d9e822a19" => :high_sierra
+    sha256 "90ee0314ef321c86ed4872f42043a02c385d95e0cb1f0fa4b14ac5877e12b07d" => :sierra
+    sha256 "c13dc99f83f891e47906851ed16c2095bb2a3e72f0f320aae0ff53dc23fd3afa" => :el_capitan
   end
 
   depends_on "autoconf" => :build
@@ -16,8 +17,9 @@ class Distcc < Formula
   depends_on "python"
 
   resource "libiberty" do
-    url "https://mirrorservice.org/sites/ftp.debian.org/debian/pool/main/libi/libiberty/libiberty_20180425.orig.tar.xz"
-    sha256 "9d925afe1a2ee1ca764e3329ffaea9c2dcc42d2d62e8a3679003321fe8cf7bf0"
+    url "https://mirrors.ocf.berkeley.edu/debian/pool/main/libi/libiberty/libiberty_20180614.orig.tar.xz"
+    mirror "https://mirrorservice.org/sites/ftp.debian.org/debian/pool/main/libi/libiberty/libiberty_20180614.orig.tar.xz"
+    sha256 "ffee051e01d07833ba2ae8cfaf8fffaa8047f530d725c6c6fcaf51c3d604740c"
   end
 
   def install

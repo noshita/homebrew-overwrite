@@ -2,24 +2,26 @@ class Duck < Formula
   desc "Command-line interface for Cyberduck (a multi-protocol file transfer tool)"
   homepage "https://duck.sh/"
   # check the changelog for the latest stable version: https://cyberduck.io/changelog/
-  url "https://dist.duck.sh/duck-src-6.6.0.28133.tar.gz"
-  sha256 "6491c93d1816027dc12aa155a95342b8fd50ada6d48790a752d5b0570b1e0f3c"
+  url "https://dist.duck.sh/duck-src-6.8.0.28825.tar.gz"
+  sha256 "75a8ae9897872464459556d65b9db5140071c046395721b9a8ef87df0deb54df"
   head "https://svn.cyberduck.io/trunk/"
 
   bottle do
-    sha256 "de962f22beeb1946ad4ba46a82774758dd08291b524432f53b793b5421f1e55b" => :high_sierra
-    sha256 "dd74a2adac3560108c30c976bbbb9bcb9cbbaf24e782c8ccbfee041eb66b1540" => :sierra
-    sha256 "2a2678ccc0a1e3c96591e46684e1ddaa06e704e9c269a2736ccdd9d773913950" => :el_capitan
+    sha256 "4e245cad2cf0f0bae191008561a200f050ab960474dd5fb5ed5cb1050ff8a3ed" => :mojave
+    sha256 "fffc4d1804f0419a73c3541dc0137ed433e5e48b49a1416c00989ea41441d39a" => :high_sierra
+    sha256 "d8f35c50ad4a8167efda52d5ad836cbc113c4496a2f96e87004800ec0f5a0b3d" => :sierra
+    sha256 "c890c105652dde634c83c41674ce944149ea3c96ac4d32bc7455fde552bfd424" => :el_capitan
   end
 
-  depends_on :java => ["1.8+", :build]
-  depends_on :xcode => :build
   depends_on "ant" => :build
+  depends_on :java => ["1.8+", :build]
   depends_on "maven" => :build
+  depends_on :xcode => :build
 
   def install
     revision = version.to_s.rpartition(".").last
-    system "mvn", "-DskipTests", "-Dgit.commitsCount=#{revision}", "--projects", "cli/osx", "--also-make", "verify"
+    system "mvn", "-DskipTests", "-Dgit.commitsCount=#{revision}",
+                  "--projects", "cli/osx", "--also-make", "verify"
     libexec.install Dir["cli/osx/target/duck.bundle/*"]
     bin.install_symlink "#{libexec}/Contents/MacOS/duck" => "duck"
   end

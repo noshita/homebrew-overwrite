@@ -1,33 +1,27 @@
 class JsonFortran < Formula
   desc "Fortran 2008 JSON API"
   homepage "https://github.com/jacobwilliams/json-fortran"
-  url "https://github.com/jacobwilliams/json-fortran/archive/6.4.0.tar.gz"
-  sha256 "df9e7eeb2e76df55628cb33bf187aa64e2c5090c2740b45bbdeee3f6c24051a9"
+  url "https://github.com/jacobwilliams/json-fortran/archive/6.10.0.tar.gz"
+  sha256 "8a383e454b39c821e2f53c6aea2a5390a3bcc12949c9d289780ab11dc081302a"
   head "https://github.com/jacobwilliams/json-fortran.git"
 
   bottle do
     cellar :any
-    sha256 "08b1c874581aea788a795351fc800716bab12f2d9caffb5d441e62799a3b4f71" => :high_sierra
-    sha256 "5fc154fa8368a942d828fdb3284d32a364abffd76707420873805818d5710b38" => :sierra
-    sha256 "534f47b2a4dd41244dfa9033d6d3b634a5bab3d3a92e2984219af49623e55260" => :el_capitan
+    rebuild 1
+    sha256 "021c8eabf2aee746ed943ffc7b2c04f75443c0ecc02c204912d5eb53e7dde92b" => :mojave
+    sha256 "5d52dd19f542e22a60d832b43d5d45d25c01b5a0833e029f5a42fcf4cf397e47" => :high_sierra
+    sha256 "6878d6ffaf0c77bf27948db9699cb12c4b2a7f8a1494396f0b1f02f889bea297" => :sierra
   end
 
-  option "with-unicode-support", "Build json-fortran to support unicode text in json objects and files"
-  option "without-docs", "Do not build and install FORD generated documentation for json-fortran"
-
-  deprecated_option "without-robodoc" => "without-docs"
-
   depends_on "cmake" => :build
-  depends_on "ford" => :build if build.with? "docs"
+  depends_on "ford" => :build
   depends_on "gcc" # for gfortran
 
   def install
     mkdir "build" do
-      args = std_cmake_args
-      args << "-DUSE_GNU_INSTALL_CONVENTION:BOOL=TRUE" # Use more GNU/Homebrew-like install layout
-      args << "-DENABLE_UNICODE:BOOL=TRUE" if build.with? "unicode-support"
-      args << "-DSKIP_DOC_GEN:BOOL=TRUE" if build.without? "docs"
-      system "cmake", "..", *args
+      system "cmake", "..", *std_cmake_args,
+                            "-DUSE_GNU_INSTALL_CONVENTION:BOOL=TRUE",
+                            "-DENABLE_UNICODE:BOOL=TRUE"
       system "make", "install"
     end
   end

@@ -1,13 +1,14 @@
 class JsonrpcGlib < Formula
   desc "GNOME library to communicate with JSON-RPC based peers"
   homepage "https://gitlab.gnome.org/GNOME/jsonrpc-glib"
-  url "https://download.gnome.org/sources/jsonrpc-glib/3.28/jsonrpc-glib-3.28.0.tar.xz"
-  sha256 "ba0b0f05d58ba47d5938a54787b44ea875648214f032f75d4344162d8f736a25"
+  url "https://download.gnome.org/sources/jsonrpc-glib/3.30/jsonrpc-glib-3.30.1.tar.xz"
+  sha256 "b675ce6f414fb8fc9eeed1ad340dc6d08fc329ed67af927bb0fa6a5d7d731dc7"
 
   bottle do
-    sha256 "75857274eb9e324e75aba750264b6619851460ad946dd02f0f5ea455a036fced" => :high_sierra
-    sha256 "4b198f2c21d0eed24f6d8d99f84ec7e596947bcf9b693fa02c622cc7aa3c8b75" => :sierra
-    sha256 "3f82ca1afc7630f79e6f923d1c7964081171764f3de9a5905faf1d566bfb65f8" => :el_capitan
+    rebuild 1
+    sha256 "4d2d67165d006e7f07116ee672c8e14e9d5bdb50a315b56221177c32dc298207" => :mojave
+    sha256 "7f4086decc07f94e58d32b2411277c8910dc74e9875ef45dd609acbad20aa001" => :high_sierra
+    sha256 "ac1bbbfd5edb3f6e121df91e3d71ec15e116a5fcf760a205d2e5bf7a0d0e81f1" => :sierra
   end
 
   depends_on "gobject-introspection" => :build
@@ -15,6 +16,7 @@ class JsonrpcGlib < Formula
   depends_on "ninja" => :build
   depends_on "pkg-config" => :build
   depends_on "python" => :build
+  depends_on "vala" => :build
   depends_on "glib"
   depends_on "json-glib"
 
@@ -22,7 +24,7 @@ class JsonrpcGlib < Formula
     ENV.refurbish_args
 
     mkdir "build" do
-      system "meson", "--prefix=#{prefix}", "-Dwith_vapi=false", ".."
+      system "meson", "--prefix=#{prefix}", "-Dwith_vapi=true", ".."
       system "ninja"
       system "ninja", "install"
     end

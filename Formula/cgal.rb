@@ -1,56 +1,32 @@
 class Cgal < Formula
   desc "Computational Geometry Algorithm Library"
   homepage "https://www.cgal.org/"
-  url "https://github.com/CGAL/cgal/releases/download/releases/CGAL-4.12/CGAL-4.12.tar.xz"
-  sha256 "442ef4fffb2ad6e4141e5a7902993ae6a4e73f7cb641fae1010bb586f6ca5e3f"
+  url "https://github.com/CGAL/cgal/releases/download/releases%2FCGAL-4.13/CGAL-4.13.tar.xz"
+  sha256 "3e3dd7a64febda58be54c3cbeba329ab6a73b72d4d7647ba4931ecd1fad0e3bc"
 
   bottle do
     cellar :any
-    sha256 "8a1ce0db7bc29ec697ecab957394f9b02592e531f94d5e8d3dc5a86a4eeca468" => :high_sierra
-    sha256 "bf4d382b7cae210fc3a4b823b779833e2dd196fac01b91d9c8104c33e040a383" => :sierra
-    sha256 "f884e64c83f93c57753b624723e373cbe14f765b67812486ebb8d29e70019148" => :el_capitan
+    rebuild 1
+    sha256 "10d0ab35e7ce05e43212ece94de295f0e9e65697f4487850d23b3a1872946e02" => :mojave
+    sha256 "71758829c6fe7cde95dddef2832a9dd1eda51bc3b5a2cc60b8f3b330f629efb2" => :high_sierra
+    sha256 "0a368594840007d0a433b702ef5392f332d38e7bc68a83ffc4771f8ca5fa5877" => :sierra
   end
-
-  option "with-eigen", "Build with Eigen3 support"
-  option "with-lapack", "Build with LAPACK support"
-  option "with-qt", "Build ImageIO and Qt components of CGAL"
-
-  deprecated_option "imaging" => "with-qt"
-  deprecated_option "with-imaging" => "with-qt"
-  deprecated_option "with-eigen3" => "with-eigen"
-  deprecated_option "with-qt5" => "with-qt"
 
   depends_on "cmake" => :build
   depends_on "boost"
+  depends_on "eigen"
   depends_on "gmp"
   depends_on "mpfr"
-  depends_on "qt" => :optional
-  depends_on "eigen" => :optional
 
   def install
     args = std_cmake_args + %W[
       -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON
       -DCMAKE_INSTALL_NAME_DIR=#{HOMEBREW_PREFIX}/lib
+      -DWITH_Eigen3=ON
+      -DWITH_LAPACK=ON
+      -DWITH_CGAL_Qt5=OFF
+      -DWITH_CGAL_ImageIO=OFF
     ]
-
-    if build.without? "qt"
-      args << "-DWITH_CGAL_Qt5=OFF" << "-DWITH_CGAL_ImageIO=OFF"
-    else
-      args << "-DWITH_CGAL_Qt5=ON" << "-DWITH_CGAL_ImageIO=ON"
-    end
-
-    if build.with? "eigen"
-      args << "-DWITH_Eigen3=ON"
-    else
-      args << "-DWITH_Eigen3=OFF"
-    end
-
-    if build.with? "lapack"
-      args << "-DWITH_LAPACK=ON"
-    else
-      args << "-DWITH_LAPACK=OFF"
-    end
-
     system "cmake", ".", *args
     system "make", "install"
   end

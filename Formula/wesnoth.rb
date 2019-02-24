@@ -3,28 +3,23 @@ class Wesnoth < Formula
   homepage "https://www.wesnoth.org/"
   url "https://downloads.sourceforge.net/project/wesnoth/wesnoth-1.12/wesnoth-1.12.6/wesnoth-1.12.6.tar.bz2"
   sha256 "a50f384cead15f68f31cfa1a311e76a12098428702cb674d3521eb169eb92e4e"
-  revision 7
+  revision 8
   head "https://github.com/wesnoth/wesnoth.git"
 
   bottle do
-    sha256 "415c02b6c6ff9664fb11f41ff9a7441356b3fb70eb4efc1d9dd21c3a9de7b370" => :high_sierra
-    sha256 "d1440a43271ccec672400bd6daefae1c448da134c35d4c282dffa038e934ed33" => :sierra
-    sha256 "f4de6ae40204fa43e16e0a970e508d7b9869965b06b1170e3a8b1c935f187c9c" => :el_capitan
+    sha256 "c1e57e9db734dae8894f25fbb2ca6668abec294af98033558e047e76c47db873" => :mojave
+    sha256 "ea1c1b9370dc86ac25a846958ecac6a731f82d79b1743de3b541fdb9111c32c6" => :high_sierra
+    sha256 "824680767e435b633e49a7ede3a4115babace30298a5c1842ee782c686ff7d74" => :sierra
   end
 
-  option "with-ccache", "Speeds recompilation, convenient for beta testers"
-  option "with-debug", "Build with debugging symbols"
-
-  depends_on "scons" => :build
   depends_on "gettext" => :build
-  depends_on "ccache" => :optional
-  depends_on "fribidi"
+  depends_on "scons" => :build
   depends_on "boost"
-  depends_on "libpng"
-  depends_on "fontconfig"
   depends_on "cairo"
+  depends_on "fontconfig"
+  depends_on "fribidi"
+  depends_on "libpng"
   depends_on "pango"
-
   depends_on "sdl"
   depends_on "sdl_image" # Must have png support
   depends_on "sdl_mixer" # The music is in .ogg format
@@ -41,10 +36,8 @@ class Wesnoth < Formula
     args << "wesnoth"
     args << "wesnothd"
     args << "-j#{ENV.make_jobs}"
-    args << "ccache=true" if build.with? "ccache"
-    args << "build=debug" if build.with? "debug"
 
-    scons *args
+    system "scons", *args
   end
 
   test do

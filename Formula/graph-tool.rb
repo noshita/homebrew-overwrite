@@ -3,14 +3,13 @@ class GraphTool < Formula
 
   desc "Efficient network analysis for Python 3"
   homepage "https://graph-tool.skewed.de/"
-  url "https://downloads.skewed.de/graph-tool/graph-tool-2.26.tar.bz2"
-  sha256 "df6273dc5ef327a0eaf1ef1c46751fce4c0b7573880944e544287b85a068f770"
-  revision 2
+  url "https://downloads.skewed.de/graph-tool/graph-tool-2.27.tar.bz2"
+  sha256 "4740c69720dfbebf8fb3e77057b3e6a257ccf0432cdaf7345f873247390e4313"
+  revision 5
 
   bottle do
-    sha256 "b545489df056088a202e0505538c2f81e74e4b997f8659a0fa72c13f16321038" => :high_sierra
-    sha256 "6f23e45cf2609a29b769c3021f82c0ec83ae48592e597810b6234887c9d88f8f" => :sierra
-    sha256 "5d3da7df6c99092f318eb744adf4aff7d7caf757eb1f28619996516a2425987b" => :el_capitan
+    sha256 "fd6dec6e0fe1b4992600c37dfc2c3ef01faf7a5ba69a877bd6d442a14f4da8ce" => :mojave
+    sha256 "a7e35d2fc82540ee670f601079de6eeb52f95f16386eb67dff725d07f166dac6" => :sierra
   end
 
   depends_on "pkg-config" => :build
@@ -49,8 +48,8 @@ class GraphTool < Formula
   end
 
   resource "python-dateutil" do
-    url "https://files.pythonhosted.org/packages/c5/39/4da7c2dbc4f023fba5fb2325febcadf0d0ce0efdc8bd12083a0f65d20653/python-dateutil-2.7.2.tar.gz"
-    sha256 "9d8074be4c993fbe4947878ce593052f71dac82932a677d49194d8ce9778002e"
+    url "https://files.pythonhosted.org/packages/a0/b0/a4e3241d2dee665fea11baec21389aec6886655cd4db7647ddf96c3fad15/python-dateutil-2.7.3.tar.gz"
+    sha256 "e27001de32f627c22380a688bcc43ce83504a7bc5da472209b4c70f02829f0b8"
   end
 
   resource "pytz" do
@@ -63,23 +62,43 @@ class GraphTool < Formula
     sha256 "70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9"
   end
 
-  def install
-    xy = Language::Python.major_minor_version "python3"
+  # Remove for > 2.27
+  # Upstream commit from 3 Jul 2018 "Fix incompatibility with Python 3.7"
+  patch do
+    url "https://git.skewed.de/count0/graph-tool/commit/0407f41a.diff"
+    sha256 "94559544ad95753a13ee701c02af706c8b296c54af2c1706520ec96e24aa6d39"
+  end
 
+  # Remove for > 2.27
+  # Upstream commit from 3 Oct 2018 "Fix compilation with CGAL 4.13"
+  patch do
+    url "https://git.skewed.de/count0/graph-tool/commit/aa39e4a6.diff"
+    sha256 "5a4ea386342c2de9422da5b07dd4272d47d2cdbba99d9b258bff65a69da562c1"
+  end
+
+  def install
+    # Work around "error: no member named 'signbit' in the global namespace"
+    ENV["SDKROOT"] = MacOS.sdk_path if MacOS.version == :high_sierra
+
+    xy = Language::Python.major_minor_version "python3"
     venv = virtualenv_create(libexec, "python3")
 
     resources.each do |r|
       venv.pip_install_and_link r
     end
 
-    system "./configure", "--disable-debug",
-                          "--disable-dependency-tracking",
-                          "--prefix=#{prefix}",
-                          "PYTHON=python3",
-                          "PYTHON_LIBS=-undefined dynamic_lookup",
-                          "--with-python-module-path=#{lib}/python#{xy}/site-packages",
-                          "--with-boost-python=libboost-python36",
-                          "--with-boost-python=36"
+    args = %W[
+      --disable-debug
+      --disable-dependency-tracking
+      --prefix=#{prefix}
+      PYTHON=python3
+      PYTHON_LIBS=-undefined\ dynamic_lookup
+      --with-python-module-path=#{lib}/python#{xy}/site-packages
+      --with-boost-python=boost_python#{xy.to_s.delete(".")}-mt
+    ]
+    args << "--with-expat=#{MacOS.sdk_path}/usr" if MacOS.sdk_path_if_needed
+
+    system "./configure", *args
     system "make", "install"
 
     site_packages = "lib/python#{xy}/site-packages"
@@ -89,7 +108,7 @@ class GraphTool < Formula
 
   test do
     (testpath/"test.py").write <<~EOS
-      import graph_tool.all as gt
+      import graph_tool as gt
       g = gt.Graph()
       v1 = g.add_vertex()
       v2 = g.add_vertex()

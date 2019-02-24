@@ -1,55 +1,35 @@
 class Ldc < Formula
   desc "Portable D programming language compiler"
   homepage "https://wiki.dlang.org/LDC"
-
-  stable do
-    url "https://github.com/ldc-developers/ldc/releases/download/v1.9.0/ldc-1.9.0-src.tar.gz"
-    sha256 "e3f32a4dfcaae12f434e0e23638684faa83765827e7f2deb2df059dccc3169b9"
-
-    resource "ldc-lts" do
-      url "https://github.com/ldc-developers/ldc/releases/download/v0.17.5/ldc-0.17.5-src.tar.gz"
-      sha256 "7aa540a135f9fa1ee9722cad73100a8f3600a07f9a11d199d8be68887cc90008"
-    end
-  end
+  url "https://github.com/ldc-developers/ldc/releases/download/v1.13.0/ldc-1.13.0-src.tar.gz"
+  sha256 "4b2fd3eb90fb6debc0ae6d70406bc78fcb531a0f20806640e626d4822e87b2e0"
+  head "https://github.com/ldc-developers/ldc.git", :shallow => false
 
   bottle do
-    sha256 "1a0a1b3a49e3b2fcf51266aec2a94a6928e23703764a3237f6c54522871f869c" => :high_sierra
-    sha256 "3bb12002c0901b1009d5e4e4a0a1500528aa462e3aed9a1d287757635554d9a8" => :sierra
-    sha256 "6b2facc40ee6fabebbbad88663f4beeb10a12977c86447c9299fe6b3b87e335d" => :el_capitan
+    sha256 "08390a0dc2fd046152aadf76fbd1de2e38c1c9dfb7373696dd92dafa31ad137e" => :mojave
+    sha256 "876f04436441623dea0622b09742444b8b938f809f06634a6d6d0feb164d291f" => :high_sierra
+    sha256 "73e5d71a5e36a6c9d501badef4eac74f39df8212f95278eda0f6c5f49ca1cfc2" => :sierra
   end
-
-  head do
-    url "https://github.com/ldc-developers/ldc.git", :shallow => false
-
-    resource "ldc-lts" do
-      url "https://github.com/ldc-developers/ldc.git", :shallow => false, :branch => "ltsmaster"
-    end
-  end
-
-  needs :cxx11
 
   depends_on "cmake" => :build
   depends_on "libconfig" => :build
-  depends_on "llvm@5"
+  depends_on "llvm"
+
+  resource "ldc-bootstrap" do
+    url "https://github.com/ldc-developers/ldc/releases/download/v1.12.0/ldc2-1.12.0-osx-x86_64.tar.xz"
+    version "1.12.0"
+    sha256 "a946e658aaff1eed80bffeb4d69b572f259368fac44673731781f6d487dea3cd"
+  end
 
   def install
     ENV.cxx11
-    (buildpath/"ldc-lts").install resource("ldc-lts")
+    (buildpath/"ldc-bootstrap").install resource("ldc-bootstrap")
 
-    cd "ldc-lts" do
-      mkdir "build" do
-        args = std_cmake_args + %W[
-          -DLLVM_ROOT_DIR=#{Formula["llvm@5"].opt_prefix}
-        ]
-        system "cmake", "..", *args
-        system "make"
-      end
-    end
     mkdir "build" do
       args = std_cmake_args + %W[
-        -DLLVM_ROOT_DIR=#{Formula["llvm@5"].opt_prefix}
+        -DLLVM_ROOT_DIR=#{Formula["llvm"].opt_prefix}
         -DINCLUDE_INSTALL_DIR=#{include}/dlang/ldc
-        -DD_COMPILER=#{buildpath}/ldc-lts/build/bin/ldmd2
+        -DD_COMPILER=#{buildpath}/ldc-bootstrap/bin/ldmd2
         -DLDC_WITH_LLD=OFF
         -DRT_ARCHIVE_WITH_LDC=OFF
       ]

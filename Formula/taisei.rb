@@ -2,11 +2,12 @@ class Taisei < Formula
   desc "Clone of Touhou Project shoot-em-up games"
   homepage "https://taisei-project.org/"
   url "https://github.com/taisei-project/taisei.git",
-      :tag => "v1.2",
+      :tag      => "v1.2",
       :revision => "46fb0f894ad269528ac7fda533c7994eddd9b758"
   revision 1
 
   bottle do
+    sha256 "5a63d77e6ba51f8907f1d6a08ca6fc3c94b7f4317afd746c91f0c8011d767c20" => :mojave
     sha256 "162eb10eaf78191aeb474f75095cb35b5840dd4b4ad1e0452ec65ab19590cf80" => :high_sierra
     sha256 "0065ca15927c95e455dd3a42c4cc1dfcb9365069c914a8d1bffca11e41dbde00" => :sierra
     sha256 "b9eae75e261940cba3bf33aec8fea1904c6de4648a0dea1f32f517289e0d9a1d" => :el_capitan

@@ -1,44 +1,27 @@
-class CodesignRequirement < Requirement
-  fatal true
-
-  satisfy(:build_env => false) do
-    FileUtils.mktemp do
-      FileUtils.cp "/usr/bin/false", "radare2_check"
-      quiet_system "/usr/bin/codesign", "-f", "-s", "org.radare.radare2", "--dryrun", "radare2_check"
-    end
-  end
-
-  def message
-    <<~EOS
-      org.radare.radare2 identity must be available to build with automated signing.
-      See: https://github.com/radare/radare2/blob/master/doc/macos.md
-    EOS
-  end
-end
-
 class Radare2 < Formula
   desc "Reverse engineering framework"
   homepage "https://radare.org"
+  revision 1
 
   stable do
-    url "https://radare.mikelloc.com/get/2.6.0/radare2-2.6.0.tar.gz"
-    sha256 "6653d5f7d10850a288abeea1ad892e2e6e0981e40bb58296d3b27ccfd88e7713"
+    url "https://radare.mikelloc.com/get/2.8.0/radare2-2.8.0.tar.gz"
+    sha256 "015c0b54cbeab2f055ca45ea57675ac5fcddb9be788249143e20bb64554a769e"
 
     resource "bindings" do
-      url "https://radare.mikelloc.com/get/2.6.0/radare2-bindings-2.6.0.tar.gz"
-      sha256 "b97b256c99398d3bfc4d0b588a63814c95a028f8bb404c2512f1644b935ed824"
+      url "https://radare.mikelloc.com/get/2.8.0/radare2-bindings-2.8.0.tar.gz"
+      sha256 "4a3b6e8101093033342e862b6834c92072bc6d902583dbca36b45a4684a4d40f"
     end
 
     resource "extras" do
-      url "https://radare.mikelloc.com/get/2.6.0/radare2-extras-2.6.0.tar.gz"
-      sha256 "bcc68f3facf4e977146a797d39722d0416195d4fbc835c62fcabe8b2055a94ba"
+      url "https://radare.mikelloc.com/get/2.8.0/radare2-extras-2.8.0.tar.gz"
+      sha256 "f11f16faec355eddc509e3615e42b5c9de565858d68790a5c7591b6525488f75"
     end
   end
 
   bottle do
-    sha256 "568b3e06a3c5ceb6ab5f22430029d1666967b2c42df642f93b715d446c13ab9a" => :high_sierra
-    sha256 "c6b1f6cce416f2c89451406efc43791a3cef1e8369cc363dd64977ea9c5b06f7" => :sierra
-    sha256 "06110fce1d5980fec9cca188ea5c1ad308cd5cc65cd2be200ef9fbb828cd1d45" => :el_capitan
+    sha256 "2e54078d5cff62cd5593ba2390a0f230e334b94024954e5b6329d52c0401aafc" => :mojave
+    sha256 "18dad4749aba2e1d3b5ecb55a1b3c55656bf0e604fc6e739b45a249809053a98" => :high_sierra
+    sha256 "67705968143b7235843ad4a494ffca8bbfb886168656a4171bb730dec615a0d2" => :sierra
   end
 
   head do
@@ -53,12 +36,11 @@ class Radare2 < Formula
     end
   end
 
-  option "with-code-signing", "Codesign executables to provide unprivileged process attachment"
-
-  depends_on "pkg-config" => :build
-  depends_on "valabind" => :build
-  depends_on "swig" => :build
   depends_on "gobject-introspection" => :build
+  depends_on "pkg-config" => :build
+  depends_on "swig" => :build
+  depends_on "valabind" => :build
+
   depends_on "gmp"
   depends_on "jansson"
   depends_on "libewf"
@@ -67,36 +49,10 @@ class Radare2 < Formula
   depends_on "openssl"
   depends_on "yara"
 
-  depends_on CodesignRequirement if build.with? "code-signing"
-
-  # These three patches update the buildsystem to fix linking libr2 with openssl.
-  # The first two are merged upstream, and the third has been submitted.
-  # https://github.com/radare/radare2/pull/10188
-  patch do
-    url "https://github.com/radare/radare2/commit/3752d992f3140806ea1d513739b6f23addf52df1.patch?full_index=1"
-    sha256 "ac0642a49603e572ef033c2f7c3225775b6996147bd7c7052d595b41edfdffca"
-  end
-
-  patch do
-    url "https://github.com/radare/radare2/commit/2ca2a0ae1565e89ed4c49813f05190c610fb37f1.patch?full_index=1"
-    sha256 "5081a33e2af8483b035fc698c1814c1a68741aa793c5ccb60faa844343829c66"
-  end
-
-  patch do
-    url "https://github.com/Homebrew/formula-patches/raw/12d117bea567c5811a7bf1a70ccd0777ecb10997/radare2/fix_openssl_build.patch"
-    sha256 "d952e048e8551017419520d29d75f988463155c2a79d89e2613423bbd9e91fd3"
-  end
-
   def install
     # Build Radare2 before bindings, otherwise compile = nope.
     system "./configure", "--prefix=#{prefix}", "--with-openssl"
     system "make", "CS_PATCHES=0"
-    if build.with? "code-signing"
-      # Brew changes the HOME directory which breaks codesign
-      home = `eval printf "~$USER"`
-      system "make", "HOME=#{home}", "-C", "binr/radare2", "macossign"
-      system "make", "HOME=#{home}", "-C", "binr/radare2", "macos-sign-libs"
-    end
     ENV.deparallelize { system "make", "install" }
 
     # remove leftover symlinks
@@ -107,10 +63,11 @@ class Radare2 < Formula
     resource("extras").stage do
       ENV.append_path "PATH", bin
       ENV.append_path "PKG_CONFIG_PATH", "#{lib}/pkgconfig"
+      (lib/"radare2/#{version}").mkpath
 
       system "./configure", "--prefix=#{prefix}"
-      system "make", "all"
-      system "make", "install"
+      system "make", "R2PM_PLUGDIR=#{lib}/radare2/#{version}", "all"
+      system "make", "R2PM_PLUGDIR=#{lib}/radare2/#{version}", "install"
     end
 
     resource("bindings").stage do
@@ -125,15 +82,27 @@ class Radare2 < Formula
       inreplace "do-swig.sh", "VALABINDFLAGS=\"\"", "VALABINDFLAGS=\"--nolibpython\""
       make_binding_args = ["CFLAGS=-undefined dynamic_lookup"]
 
-      # Ensure that plugins and bindings are installed in the correct Cellar
-      # paths.
-      inreplace "libr/lang/p/Makefile", "R2_PLUGIN_PATH=", "#R2_PLUGIN_PATH="
-      # fix build, https://github.com/radare/radare2-bindings/pull/168
-      inreplace "libr/lang/p/Makefile",
-      "CFLAGS+=$(shell pkg-config --cflags r_core)",
-      "CFLAGS+=$(shell pkg-config --cflags r_core) -DPREFIX=\\\"${PREFIX}\\\""
-      inreplace "Makefile", "LUAPKG=", "#LUAPKG="
-      inreplace "Makefile", "${DESTDIR}$$_LUADIR", "#{lib}/lua/#{lua_version}"
+      # Ensure that plugins and bindings are installed in the Cellar.
+      inreplace "libr/lang/p/Makefile" do |s|
+        s.gsub! "R2_PLUGIN_PATH=", "#R2_PLUGIN_PATH="
+        s.gsub! "~/.config/radare2/plugins", "#{lib}/radare2/#{version}"
+      end
+
+      # We don't want to place json.lua in lib/lua/#{lua_version} because
+      # the name is very generic, which introduces a strong possibility of
+      # clashes with other formulae or in general usage.
+      inreplace "libr/lang/p/lua.c",
+                'os.getenv(\"HOME\")..\"/.config/radare2/plugins/lua/?.lua;',
+                "\\\"#{libexec}/lua/#{lua_version}/?.lua;"
+
+      # Really the Lua libraries should be dumped in libexec too but
+      # since they're named fairly specifically it's semi-acceptable.
+      inreplace "Makefile" do |s|
+        s.gsub! "LUAPKG=", "#LUAPKG="
+        s.gsub! "${DESTDIR}$$_LUADIR", "#{lib}/lua/#{lua_version}"
+        s.gsub! "ls lua/*so*$$_LUAVER", "ls lua/*so"
+      end
+
       make_install_args = %W[
         R2_PLUGIN_PATH=#{lib}/radare2/#{version}
         LUAPKG=lua-#{lua_version}
@@ -148,6 +117,11 @@ class Radare2 < Formula
       end
       system "make"
       system "make", "install", *make_install_args
+
+      # This should be being handled by the Makefile but for some reason
+      # it doesn't want to work. If this ever breaks it's likely because
+      # the Makefile has started functioning as expected & placing it in lib.
+      (libexec/"lua/#{lua_version}").install Dir["libr/lang/p/lua/*.lua"]
     end
   end
 

@@ -6,13 +6,14 @@ class Cogl < Formula
   revision 1
 
   bottle do
+    sha256 "e8101f1075c0f7754670e94355b6adee2981cbc06f2cd06221e06009a730213f" => :mojave
     sha256 "d5cf5821953809ef2d1cefbffec2f6e44a6eaa65ce377e867e938b03983f7125" => :high_sierra
     sha256 "29ba6e0eea677529b8558de0fc4a81b0ca3c26a6a8c517b92d3108785476d206" => :sierra
     sha256 "cb19f43f005213580caec8ef9bacb024df5839b0d5a2a337ec6c189340d78548" => :el_capitan
   end
 
   head do
-    url "https://git.gnome.org/browse/cogl.git"
+    url "https://gitlab.gnome.org/GNOME/cogl.git"
     depends_on "autoconf" => :build
     depends_on "automake" => :build
     depends_on "libtool" => :build
@@ -25,30 +26,9 @@ class Cogl < Formula
   depends_on "gtk-doc"
   depends_on "pango"
 
-  # Lion's grep fails, which later results in compilation failures:
-  # libtool: link: /usr/bin/grep -E -e [really long regexp] ".libs/libcogl.exp" > ".libs/libcogl.expT"
-  # grep: Regular expression too big
-  if MacOS.version == :lion
-    resource "grep" do
-      url "https://ftp.gnu.org/gnu/grep/grep-2.20.tar.xz"
-      mirror "https://ftpmirror.gnu.org/grep/grep-2.20.tar.xz"
-      sha256 "f0af452bc0d09464b6d089b6d56a0a3c16672e9ed9118fbe37b0b6aeaf069a65"
-    end
-  end
-
   def install
     # Don't dump files in $HOME.
     ENV["GI_SCANNER_DISABLE_CACHE"] = "yes"
-
-    if MacOS.version == :lion
-      resource("grep").stage do
-        system "./configure", "--disable-dependency-tracking",
-               "--disable-nls",
-               "--prefix=#{buildpath}/grep"
-        system "make", "install"
-        ENV["GREP"] = "#{buildpath}/grep/bin/grep"
-      end
-    end
 
     args = %W[
       --disable-dependency-tracking

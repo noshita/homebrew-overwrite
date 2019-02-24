@@ -2,7 +2,7 @@ class Fstar < Formula
   desc "ML-like language aimed at program verification"
   homepage "https://www.fstar-lang.org/"
   url "https://github.com/FStarLang/FStar.git",
-      :tag => "v0.9.6.0",
+      :tag      => "v0.9.6.0",
       :revision => "743819b909b804f1234975d78809e18fd9ea0b99"
   head "https://github.com/FStarLang/FStar.git"
 
@@ -14,8 +14,8 @@ class Fstar < Formula
     sha256 "c6e164c3851993e7d8d920edfc093b82fd1b86f35ccc6326746a3f60d5120cb5" => :el_capitan
   end
 
-  depends_on "ocamlbuild" => :build
   depends_on "camlp4" => :build
+  depends_on "ocamlbuild" => :build
   depends_on "opam" => :build
   depends_on "gmp"
   depends_on "ocaml"

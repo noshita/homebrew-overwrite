@@ -1,35 +1,29 @@
 class Ntp < Formula
   desc "The Network Time Protocol (NTP) Distribution"
   homepage "https://www.eecis.udel.edu/~mills/ntp/html/"
-  url "https://www.eecis.udel.edu/~ntp/ntp_spool/ntp4/ntp-4.2/ntp-4.2.8p11.tar.gz"
-  version "4.2.8p11"
-  sha256 "f14a39f753688252d683ff907035ffff106ba8d3db21309b742e09b5c3cd278e"
+  url "https://www.eecis.udel.edu/~ntp/ntp_spool/ntp4/ntp-4.2/ntp-4.2.8p12.tar.gz"
+  version "4.2.8p12"
+  sha256 "709b222b5013d77d26bfff532b5ea470a8039497ef29d09363931c036cb30454"
 
   bottle do
-    sha256 "7f31f03699629db42395a843e01800a3733b5615aab17fee1a631ae1a791042c" => :high_sierra
-    sha256 "fa9f1682235a5b26539f86fc1f96deab602898f90c9014a81e4409e06606d842" => :sierra
-    sha256 "9f49c8fb9b0f4ac8b5cf730d45d13656e4e80fbd030e6f5a92d26b1d5fe6b9bb" => :el_capitan
+    rebuild 1
+    sha256 "0ad5a4953a1fc2598b0fee4ed85fdb61e62d6acd1c7a80aa8ba448cfd829e908" => :mojave
+    sha256 "00a29bdce9bc82c18aa824693146f8c0674af3ca8bef3f42f63c87ab5bd4aa02" => :high_sierra
+    sha256 "a37c6e3e17a8862d770e2f27a399d85198a68f88a592234db55fd80e06ff9cee" => :sierra
   end
 
-  option "with-net-snmp", "Build ntpsnmpd, the SNMP MIB agent for ntpd"
-
   depends_on "openssl"
-  depends_on "net-snmp" => :optional
 
   def install
-    args = [
-      "--disable-debug",
-      "--disable-dependency-tracking",
-      "--disable-silent-rules",
-      "--prefix=#{prefix}",
-      "--with-openssl-libdir=#{Formula["openssl"].lib}",
-      "--with-openssl-incdir=#{Formula["openssl"].include}",
+    args = %W[
+      --disable-debug
+      --disable-dependency-tracking
+      --disable-silent-rules
+      --prefix=#{prefix}
+      --with-openssl-libdir=#{Formula["openssl"].lib}
+      --with-openssl-incdir=#{Formula["openssl"].include}
+      --with-net-snmp-config=no
     ]
-    if build.with?("net-snmp")
-      args << "--with-net-snmp-config"
-    else
-      args << "--with-net-snmp-config=no"
-    end
 
     system "./configure", *args
     system "make", "install", "LDADD_LIBNTP=-lresolv -undefined dynamic_lookup"

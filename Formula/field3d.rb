@@ -3,13 +3,13 @@ class Field3d < Formula
   homepage "https://sites.google.com/site/field3d/"
   url "https://github.com/imageworks/Field3D/archive/v1.7.2.tar.gz"
   sha256 "8f7c33ecb4489ed626455cf3998d911a079b4f137f86814d9c37c5765bf4b020"
-  revision 6
+  revision 8
 
   bottle do
     cellar :any
-    sha256 "9b9781061c5162e9c8c8ae114a6819132adedd8b0ff3d7a0e0d46356a5954a61" => :high_sierra
-    sha256 "7cdff726ef6ec08105a0bf3b8c08468ce15c48f7d0a383fee03b171be9d6d74a" => :sierra
-    sha256 "2222a736747101ec9226b71524943bfe3c304913c0078dfc6a22bb0be434f9b5" => :el_capitan
+    sha256 "05461715cbad0d1db99f9bda36761902fe61a87f5c666cb6caa98afb2d3bf1e0" => :mojave
+    sha256 "defc2459a3a5cfcfc68ed7c9d7be62f41c56a30c4ea5626b9b7904a091e6a82a" => :high_sierra
+    sha256 "b379c7580a6954d1130b294a5b4478f59750cb6f28aea3dcf868f31dc9c524a0" => :sierra
   end
 
   depends_on "scons" => :build

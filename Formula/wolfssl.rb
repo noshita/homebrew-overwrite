@@ -1,21 +1,18 @@
 class Wolfssl < Formula
   desc "Embedded SSL Library written in C"
   homepage "https://www.wolfssl.com/wolfSSL/Home.html"
-  url "https://github.com/wolfSSL/wolfssl/archive/v3.15.0-stable.tar.gz"
-  version "3.15.0"
-  sha256 "67e04f6b1ab51e4d6d0b706c784b18f9bde5149b841713fd745479e13dc2670f"
+  url "https://github.com/wolfSSL/wolfssl.git",
+      :tag      => "v3.15.7-stable",
+      :revision => "a7350b7d2ed15648443253cb39ad9195df184139"
+  sha256 "4e15f494604e41725499f8b708798f8ddc2fcaa8f39b4369bcd000b3cab482d8"
   head "https://github.com/wolfSSL/wolfssl.git"
 
   bottle do
     cellar :any
-    sha256 "d6322700b7ba6dde72a2c86c65e277646eeca39d2e412cd855d8ef3d736942ca" => :high_sierra
-    sha256 "9170347bc0cbd259ae7982138b5dde16d436507435576e6e1162bfa74f3be6ac" => :sierra
-    sha256 "da8a44397fbd9dca0b442ad447602ee35e108d1dc3bd5f1aadd6685d192d5f07" => :el_capitan
+    sha256 "d34e3fc6fbe662b9b03e07cbdc57808f10fa24f1b93108a2d5afb1047d77965f" => :mojave
+    sha256 "d9efcf36b72442a4284baacf92fbb22a559a4b775e5e35da6843ce86ca6ea15f" => :high_sierra
+    sha256 "646439cffbf0099aaa255f1a643061559f426b3868f7bd11c53042771c4a152d" => :sierra
   end
-
-  option "without-test", "Skip compile-time tests"
-
-  deprecated_option "without-check" => "without-test"
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
@@ -75,25 +72,20 @@ class Wolfssl < Formula
       --enable-sni
       --enable-supportedcurves
       --enable-tls13
+      --enable-sp
+      --enable-fastmath
+      --enable-fasthugemath
     ]
-
-    if MacOS.prefer_64_bit?
-      args << "--enable-fastmath" << "--enable-fasthugemath"
-    else
-      args << "--disable-fastmath" << "--disable-fasthugemath"
-    end
-
-    args << "--enable-aesni" if Hardware::CPU.aes? && !build.bottle?
 
     # Extra flag is stated as a needed for the Mac platform.
     # https://wolfssl.com/wolfSSL/Docs-wolfssl-manual-2-building-wolfssl.html
     # Also, only applies if fastmath is enabled.
-    ENV.append_to_cflags "-mdynamic-no-pic" if MacOS.prefer_64_bit?
+    ENV.append_to_cflags "-mdynamic-no-pic"
 
     system "./autogen.sh"
     system "./configure", *args
     system "make"
-    system "make", "check" if build.with? "test"
+    system "make", "check"
     system "make", "install"
   end
 

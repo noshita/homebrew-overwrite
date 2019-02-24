@@ -1,14 +1,14 @@
 class BdwGc < Formula
   desc "Garbage collector for C and C++"
-  homepage "http://www.hboehm.info/gc/"
-  url "https://github.com/ivmai/bdwgc/releases/download/v7.6.6/gc-7.6.6.tar.gz"
-  sha256 "e968edf8f80d83284dd473e00a5e3377addc2df261ffb7e6dc77c9a34a0039dc"
+  homepage "https://www.hboehm.info/gc/"
+  url "https://github.com/ivmai/bdwgc/releases/download/v8.0.2/gc-8.0.2.tar.gz"
+  sha256 "4e8ca4b5b72a3a27971daefaa9b621f0a716695b23baa40b7eac78de2eeb51cb"
 
   bottle do
     cellar :any
-    sha256 "92c0083a6b6ae87607e13185a59e3f1794b543f7172889777bc09c0e9c1e158b" => :high_sierra
-    sha256 "ccd948680c4d35ea36968605a7e51e038187b8492c7888369a180659905b200c" => :sierra
-    sha256 "13cd1da271d203af0e834a53f232122ab0a740bf9bbb68c68cc172bd23654eab" => :el_capitan
+    sha256 "456bcc98f7bfbf3450c0fe729940aae4819e8db6093799bcd00cdba1875201f4" => :mojave
+    sha256 "2f2ac45b40864ad3cc08fbbfdad80336842bc2bc950277fce147a81daebd5558" => :high_sierra
+    sha256 "43ec8fd9fc66fb60270a2380039a7af16124bb6748735d431d8add3e0d73cd7a" => :sierra
   end
 
   head do
@@ -18,8 +18,8 @@ class BdwGc < Formula
     depends_on "libtool"  => :build
   end
 
-  depends_on "pkg-config" => :build
   depends_on "libatomic_ops" => :build
+  depends_on "pkg-config" => :build
 
   def install
     system "./autogen.sh" if build.head?

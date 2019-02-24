@@ -3,22 +3,23 @@ class Neko < Formula
   homepage "https://nekovm.org/"
   url "https://github.com/HaxeFoundation/neko/archive/v2-2-0/neko-2.2.0.tar.gz"
   sha256 "cf101ca05db6cb673504efe217d8ed7ab5638f30e12c5e3095f06fa0d43f64e3"
-  revision 4
+  revision 6
   head "https://github.com/HaxeFoundation/neko.git"
 
   bottle do
-    sha256 "0b69afaf539f85ccdda6d4e84797f02dd3211339103ef788ec85b69fddc35369" => :high_sierra
-    sha256 "190e61cf6002dcc4e3dbb8c3d807948dcb359456aebad490bc37986b9cc1b6e1" => :sierra
-    sha256 "a8aa2f266cdf8f84a18369ca79a59230c89aaa39ff4c6043b42e26d7f0150573" => :el_capitan
+    sha256 "e4d68665d504273468b38a5891c938d59080147677abfc718967e11eeb70ce5d" => :mojave
+    sha256 "396aea7bce27dcba88338f6698036c097864a172732742e04bfac4815fc7c7e7" => :high_sierra
+    sha256 "12be1d612bea5f7efbca986107ea498edec85d610e7df6abde68c95a07e5746c" => :sierra
+    sha256 "0054a53a378dc7ab95c74fff99f80a3bd15b927fe87204635b728a9bbdc2b866" => :el_capitan
   end
 
   depends_on "cmake" => :build
   depends_on "ninja" => :build
   depends_on "pkg-config" => :build
-  depends_on "mbedtls"
   depends_on "bdw-gc"
-  depends_on "pcre"
+  depends_on "mbedtls"
   depends_on "openssl"
+  depends_on "pcre"
 
   def install
     # Let cmake download its own copy of MariaDBConnector during build and statically link it.

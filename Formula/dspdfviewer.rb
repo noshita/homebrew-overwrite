@@ -4,10 +4,10 @@ class Dspdfviewer < Formula
   url "https://github.com/dannyedel/dspdfviewer/archive/v1.15.1.tar.gz"
   sha256 "c5b6f8c93d732e65a27810286d49a4b1c6f777d725e26a207b14f6b792307b03"
   revision 7
-
   head "https://github.com/dannyedel/dspdfviewer.git"
 
   bottle do
+    sha256 "cb04143b607d08b7d290fd7b6e757a0fd753e7e8f6eb92dafbab10ae384b942c" => :mojave
     sha256 "4f605633dbfd654c220f050a72491a2e0299a2f45278f8a8921a87c1bb5f7e12" => :high_sierra
     sha256 "06661dd7f74c31354a0412641bfda4304f1f8ef88c50b0010fad5dced05dd3ed" => :sierra
     sha256 "dcfddcc1fc9c96c8f8e8f82be38aa06f346ab3ae23d12f1bf2b29dd7be1057cd" => :el_capitan
@@ -37,8 +37,6 @@ class Dspdfviewer < Formula
     url "https://poppler.freedesktop.org/poppler-data-0.4.9.tar.gz"
     sha256 "1f9c7e7de9ecd0db6ab287349e31bf815ca108a5a175cf906a90163bdbe32012"
   end
-
-  needs :cxx11
 
   def install
     ENV.cxx11

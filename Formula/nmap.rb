@@ -6,15 +6,13 @@ class Nmap < Formula
   head "https://svn.nmap.org/nmap/"
 
   bottle do
+    sha256 "9a9bfb7842cb631f4d48384e7f0624540c109c1fbf16dc1df3a2bab521392f61" => :mojave
     sha256 "ef7ef98c6b83c013727eea37c37dcfa04eb6a572dc03699920cd7fc76a7f358a" => :high_sierra
     sha256 "a39669b4c391823e7f42407654475539d7b4b58bc343817c6bfb96bc4063e848" => :sierra
     sha256 "a597fa10396be4a782a198f4af51565c15dc8ae59cbe8c367bb78fd3babd972e" => :el_capitan
   end
 
-  option "with-pygtk", "Build Zenmap GUI"
-
   depends_on "openssl"
-  depends_on "pygtk" => :optional
 
   conflicts_with "ndiff", :because => "both install `ndiff` binaries"
 
@@ -28,9 +26,8 @@ class Nmap < Formula
       --with-openssl=#{Formula["openssl"].opt_prefix}
       --without-nmap-update
       --disable-universal
+      --without-zenmap
     ]
-
-    args << "--without-zenmap" if build.without? "pygtk"
 
     system "./configure", *args
     system "make" # separate steps required otherwise the build fails

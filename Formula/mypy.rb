@@ -2,23 +2,20 @@ class Mypy < Formula
   desc "Experimental optional static type checker for Python"
   homepage "http://www.mypy-lang.org/"
   url "https://github.com/python/mypy.git",
-      :tag => "v0.610",
-      :revision => "4f4dc6de32e5cfd6f2d2079a47f52942a2397b97"
+      :tag      => "v0.620",
+      :revision => "67b260f0fec0b0d97c92529359796e9ad5c1a30d"
   head "https://github.com/python/mypy.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "bfe860b08474c88c2c4af77e9e504bf33d156043eaf3f9a4f5a12dd7b3221a2c" => :high_sierra
-    sha256 "d7ddfc2011e252f5904dbcf2bad0a82fdb5e58a47f98e9f3538ff28f168042cc" => :sierra
-    sha256 "ca45b7c838cd3453a2fc3359950a3a87cfb2678a3cfae78feb31de2be904fd77" => :el_capitan
+    sha256 "c40a1bf7fc53206051227482c8452d7c19aedb8a32d2831806db075861175a14" => :mojave
+    sha256 "2a13c36dbca981b4b7e658ccbce713273b5820fe44f13bc870198be92b1d892b" => :high_sierra
+    sha256 "719f628bd75e16058f494c4494235513c9c347958f0fe4234b952e4047367fd9" => :sierra
+    sha256 "95a7fda13b3fbace3617e4145719e839002b4523fbf5b35a3457e49ede590edb" => :el_capitan
   end
 
-  option "without-sphinx-doc", "Don't build documentation"
-
-  deprecated_option "without-docs" => "without-sphinx-doc"
-
+  depends_on "sphinx-doc" => :build
   depends_on "python"
-  depends_on "sphinx-doc" => [:build, :recommended]
 
   resource "psutil" do
     url "https://files.pythonhosted.org/packages/51/9e/0f8f5423ce28c9109807024f7bdde776ed0b1161de20b408875de7e030c3/psutil-5.4.6.tar.gz"
@@ -38,22 +35,20 @@ class Mypy < Formula
   def install
     xy = Language::Python.major_minor_version "python3"
 
-    if build.with? "sphinx-doc"
-      # https://github.com/python/mypy/issues/2593
-      version_static = buildpath/"mypy/version_static.py"
-      version_static.write "__version__ = '#{version}'\n"
-      inreplace "docs/source/conf.py", "mypy.version", "mypy.version_static"
+    # https://github.com/python/mypy/issues/2593
+    version_static = buildpath/"mypy/version_static.py"
+    version_static.write "__version__ = '#{version}'\n"
+    inreplace "docs/source/conf.py", "mypy.version", "mypy.version_static"
 
-      (buildpath/"docs/sphinx_rtd_theme").install resource("sphinx_rtd_theme")
-      # Inject sphinx_rtd_theme's path into sys.path
-      inreplace "docs/source/conf.py",
-                "sys.path.insert(0, os.path.abspath('../..'))",
-                "sys.path[:0] = [os.path.abspath('../..'), os.path.abspath('../sphinx_rtd_theme')]"
-      system "make", "-C", "docs", "html"
-      doc.install Dir["docs/build/html/*"]
+    (buildpath/"docs/sphinx_rtd_theme").install resource("sphinx_rtd_theme")
+    # Inject sphinx_rtd_theme's path into sys.path
+    inreplace "docs/source/conf.py",
+              "sys.path.insert(0, os.path.abspath('../..'))",
+              "sys.path[:0] = [os.path.abspath('../..'), os.path.abspath('../sphinx_rtd_theme')]"
+    system "make", "-C", "docs", "html"
+    doc.install Dir["docs/build/html/*"]
 
-      rm version_static
-    end
+    rm version_static
 
     ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python#{xy}/site-packages"
     resources.each do |r|

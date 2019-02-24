@@ -3,41 +3,24 @@
 class Qt < Formula
   desc "Cross-platform application and UI framework"
   homepage "https://www.qt.io/"
-  url "https://download.qt.io/official_releases/qt/5.11/5.11.0/single/qt-everywhere-src-5.11.0.tar.xz"
-  mirror "https://qt.mirror.constant.com/archive/qt/5.11/5.11.0/single/qt-everywhere-src-5.11.0.tar.xz"
-  mirror "http://qt.mirrors.tds.net/qt/archive/qt/5.11/5.11.0/single/qt-everywhere-src-5.11.0.tar.xz"
-  sha256 "67ddb8bf33bbfd19ebc641467ccce2e57fd0b80c6082457f1f5a76e8df83c865"
-  head "https://code.qt.io/qt/qt5.git", :branch => "5.11", :shallow => false
+  url "https://download.qt.io/official_releases/qt/5.12/5.12.1/single/qt-everywhere-src-5.12.1.tar.xz"
+  mirror "https://qt.mirror.constant.com/archive/qt/5.12/5.12.1/single/qt-everywhere-src-5.12.1.tar.xz"
+  mirror "https://ftp.osuosl.org/pub/blfs/conglomeration/qt5/qt-everywhere-src-5.12.1.tar.xz"
+  sha256 "caffbd625c7bc10ff8c5c7a27dbc7d84fa4de146975c0e1ffe904b514ccd6da4"
+
+  head "https://code.qt.io/qt/qt5.git", :branch => "dev", :shallow => false
 
   bottle do
-    sha256 "83bb9714f20dc5961f6034546e3e80b1b0c414533b997b8d2924623007a9f256" => :high_sierra
-    sha256 "16ee83014acd2923c559dee6d5d9f002dd1ce54f73c7f747b5240a5661f5aebf" => :sierra
-    sha256 "2e777402c4c9add259137ce04e9e56051af11bda83f541b8a7eaf5c5351d15d7" => :el_capitan
+    cellar :any
+    sha256 "d96ef428caa3b82d52039e9b7a0c768fbd70103f35b4b87989d01b3370b1e8c5" => :mojave
+    sha256 "0b3487813eac66f3e9637fdf1ec02a054e2be9bfbb03b467798c07186fa9a19c" => :high_sierra
+    sha256 "f4898e2f36c16ba2a0d02032b7df78107a01e24407aa61def278bc492cff0272" => :sierra
   end
 
   keg_only "Qt 5 has CMake issues when linked"
 
-  option "with-docs", "Build documentation"
-  option "with-examples", "Build examples"
-  option "without-proprietary-codecs", "Don't build with proprietary codecs (e.g. mp3)"
-
-  deprecated_option "with-mysql" => "with-mysql-client"
-
   depends_on "pkg-config" => :build
   depends_on :xcode => :build
-  depends_on "mysql-client" => :optional
-  depends_on "postgresql" => :optional
-
-  # Restore `.pc` files for framework-based build of Qt 5 on macOS, partially
-  # reverting <https://codereview.qt-project.org/#/c/140954/>
-  # Core formulae known to fail without this patch (as of 2016-10-15):
-  #   * gnuplot (with `--with-qt` option)
-  #   * mkvtoolnix (with `--with-qt` option, silent build failure)
-  #   * poppler (with `--with-qt` option)
-  patch do
-    url "https://raw.githubusercontent.com/Homebrew/formula-patches/e8fe6567/qt5/restore-pc-files.patch"
-    sha256 "48ff18be2f4050de7288bddbae7f47e949512ac4bcd126c2f504be2ac701158b"
-  end
 
   def install
     args = %W[
@@ -50,40 +33,18 @@ class Qt < Formula
       -qt-libjpeg
       -qt-freetype
       -qt-pcre
+      -nomake examples
       -nomake tests
       -no-rpath
       -pkg-config
       -dbus-runtime
+      -proprietary-codecs
     ]
-
-    args << "-nomake" << "examples" if build.without? "examples"
-
-    if build.with? "mysql-client"
-      args << "-plugin-sql-mysql"
-      (buildpath/"brew_shim/mysql_config").write <<~EOS
-        #!/bin/sh
-        if [ x"$1" = x"--libs" ]; then
-          mysql_config --libs | sed "s/-lssl -lcrypto//"
-        else
-          exec mysql_config "$@"
-        fi
-      EOS
-      chmod 0755, "brew_shim/mysql_config"
-      args << "-mysql_config" << buildpath/"brew_shim/mysql_config"
-    end
-
-    args << "-plugin-sql-psql" if build.with? "postgresql"
-    args << "-proprietary-codecs" if build.with? "proprietary-codecs"
 
     system "./configure", *args
     system "make"
     ENV.deparallelize
     system "make", "install"
-
-    if build.with? "docs"
-      system "make", "docs"
-      system "make", "install_docs"
-    end
 
     # Some config scripts will only find Qt in a "Frameworks" folder
     frameworks.install_symlink Dir["#{lib}/*.framework"]

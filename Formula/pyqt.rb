@@ -4,23 +4,20 @@ class Pyqt < Formula
   url "https://dl.bintray.com/homebrew/mirror/pyqt-5.10.1.tar.gz"
   mirror "https://downloads.sourceforge.net/project/pyqt/PyQt5/PyQt-5.10.1/PyQt5_gpl-5.10.1.tar.gz"
   sha256 "9932e971e825ece4ea08f84ad95017837fa8f3f29c6b0496985fa1093661e9ef"
+  revision 1
 
   bottle do
-    rebuild 1
-    sha256 "6c25b7cb920e387426f82504152c8a4b914d8b42f92beed53f85832912c12034" => :high_sierra
-    sha256 "9e75ec0a4bef6be7928db8fd3f8a1513d04aac1941226f133093a3494071701e" => :sierra
-    sha256 "318c651ca9ff01dcd4c251a025eb89a105c560a5aaf1deb24b91bb08088d6ec2" => :el_capitan
+    cellar :any
+    rebuild 2
+    sha256 "c941b19b803f11da31ec2cd93550a7b70b1ef919868890abf37b8d6d8e9dc089" => :mojave
+    sha256 "cdbf71cc3b3c6b372787dc402f3c5ce48e17167d69349af7f8fd7fbd08b5286b" => :high_sierra
+    sha256 "7f300676f7d52223129dc4e5080db09aa639ab5b92ca27a3424655ca438a0bf4" => :sierra
   end
 
-  option "with-debug", "Build with debug symbols"
-  option "with-docs", "Install HTML documentation and python examples"
-
-  deprecated_option "enable-debug" => "with-debug"
-
+  depends_on "python"
+  depends_on "python@2"
   depends_on "qt"
   depends_on "sip"
-  depends_on "python" => :recommended
-  depends_on "python@2" => :recommended
 
   # Patch from openSUSE for compatibility with Qt 5.11.0
   # https://build.opensuse.org/package/show/home:cgiboudeaux:branches:KDE:Qt5/python-qt5
@@ -30,7 +27,8 @@ class Pyqt < Formula
   end
 
   def install
-    Language::Python.each_python(build) do |python, version|
+    ["python2", "python3"].each do |python|
+      version = Language::Python.major_minor_version python
       args = ["--confirm-license",
               "--bindir=#{bin}",
               "--destdir=#{lib}/python#{version}/site-packages",
@@ -43,20 +41,19 @@ class Pyqt < Formula
               "QMAKE_MACOSX_DEPLOYMENT_TARGET=#{MacOS.version}",
               "--qml-plugindir=#{pkgshare}/plugins",
               "--verbose"]
-      args << "--debug" if build.with? "debug"
 
       system python, "configure.py", *args
       system "make"
       system "make", "install"
       system "make", "clean"
     end
-    doc.install "doc/html", "examples" if build.with? "docs"
   end
 
   test do
     system "#{bin}/pyuic5", "--version"
     system "#{bin}/pylupdate5", "-version"
-    Language::Python.each_python(build) do |python, _version|
+
+    ["python2", "python3"].each do |python|
       system python, "-c", "import PyQt5"
       %w[
         Gui

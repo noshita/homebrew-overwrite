@@ -1,46 +1,47 @@
 class Ice < Formula
   desc "Comprehensive RPC framework"
   homepage "https://zeroc.com"
-  url "https://github.com/zeroc-ice/ice/archive/v3.7.1.tar.gz"
-  sha256 "b1526ab9ba80a3d5f314dacf22674dff005efb9866774903d0efca5a0fab326d"
+  url "https://github.com/zeroc-ice/ice/archive/v3.7.2.tar.gz"
+  sha256 "e329a24abf94a4772a58a0fe61af4e707743a272c854552eef3d7833099f40f9"
 
   bottle do
     cellar :any
-    sha256 "a6a580aed075a7edcb9f59886bc59b0e6da888623dbf6d81c98f26c4fc472613" => :high_sierra
-    sha256 "73cb8a7d1af848b1832d1e837f2a3ec6c35846a8b7431748fd8e175442261df8" => :sierra
-    sha256 "319fa13dfe77aa352dd84fb5495fd548fc7d870305fd7c3ee2137c2f298cbf5e" => :el_capitan
+    sha256 "cbb84aa941cb649002f99a17c6689839f460cd98ea9b94c37feba727b25dbfcd" => :mojave
+    sha256 "ad69bfebe60936dd6d32923f004f4f6ebce35c33019470c895251d76d6a46d4e" => :high_sierra
+    sha256 "fa4ee11fe92011c69fd9bc3c64aedc07a38f63e5a71ce1637109b1955df839a5" => :sierra
   end
 
-  #
-  # NOTE: we don't build slice2py, slice2js, slice2rb by default to prevent clashes with
-  # the translators installed by the PyPI/GEM/npm packages.
-  #
-
-  option "with-additional-compilers", "Build additional Slice compilers (slice2py, slice2js, slice2rb)"
-  option "with-java", "Build Ice for Java and the IceGrid GUI app"
-  option "without-xcode-sdk", "Build without the Xcode SDK for iOS development (includes static libs)"
-
-  depends_on "mcpp"
   depends_on "lmdb"
-  depends_on :java => ["1.8+", :optional]
-  depends_on :macos => :mavericks
+  depends_on "mcpp"
 
   def install
     ENV.O2 # Os causes performance issues
-    # Ensure Gradle uses a writable directory even in sandbox mode
-    ENV["GRADLE_USER_HOME"] = "#{buildpath}/.gradle"
 
     args = [
       "prefix=#{prefix}",
       "V=1",
       "MCPP_HOME=#{Formula["mcpp"].opt_prefix}",
       "LMDB_HOME=#{Formula["lmdb"].opt_prefix}",
-      "CONFIGS=shared cpp11-shared #{build.with?("xcode-sdk") ? "xcodesdk cpp11-xcodesdk" : ""}",
+      "CONFIGS=shared cpp11-shared xcodesdk cpp11-xcodesdk",
       "PLATFORMS=all",
-      "SKIP=slice2confluence #{build.without?("additional-compilers") ? "slice2py slice2rb slice2js" : ""}",
-      "LANGUAGES=cpp objective-c #{build.with?("java") ? "java java-compat" : ""}",
+      "SKIP=slice2confluence",
+      "LANGUAGES=cpp objective-c",
     ]
     system "make", "install", *args
+
+    (libexec/"bin").mkpath
+    %w[slice2py slice2rb slice2js].each do |r|
+      mv bin/r, libexec/"bin"
+    end
+  end
+
+  def caveats; <<~EOS
+    slice2py, slice2js and slice2rb were installed in:
+
+      #{opt_libexec}/bin
+
+    You may wish to add this directory to your PATH.
+  EOS
   end
 
   test do

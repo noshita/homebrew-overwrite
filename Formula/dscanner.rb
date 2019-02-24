@@ -1,16 +1,16 @@
 class Dscanner < Formula
   desc "Analyses e.g. the style and syntax of D code"
-  homepage "https://github.com/dlang-community/Dscanner"
-  url "https://github.com/dlang-community/Dscanner.git",
-      :tag => "v0.5.7",
-      :revision => "76d8a30d2307d5d4e9c1a3972808752199449694"
-
-  head "https://github.com/dlang-community/Dscanner.git"
+  homepage "https://github.com/dlang-community/D-Scanner"
+  url "https://github.com/dlang-community/D-Scanner.git",
+      :tag      => "v0.6.0",
+      :revision => "3759479d9cee8ac322aeb22f95957333e8383e34"
+  head "https://github.com/dlang-community/D-Scanner.git"
 
   bottle do
-    sha256 "4a89c558303b0dd7da3654f1436c2d095b1bcc85f43a80694834dd5e8f598f90" => :high_sierra
-    sha256 "13677ecd641a86b9a2e87f47b5a8d5aeafc9958bb155de9b6a5351ed3d0caa61" => :sierra
-    sha256 "2c4a31c5d8fc9d45a925e918c413326a8a50c29fc4641a5a20e0219cae1fb6ea" => :el_capitan
+    cellar :any_skip_relocation
+    sha256 "b3553bc82dbf0730fd847d12358886a7991f2922d4973742cf06b7cfea8d3f6d" => :mojave
+    sha256 "18048d735a5b5b742c50386fe787ada697aaecbbfee198f369cb68565d1f11cc" => :high_sierra
+    sha256 "f6907427563b4ef09eb4650a4013c2effc3b4010ab499ef285ef8a95bbe75d82" => :sierra
   end
 
   depends_on "dmd" => :build

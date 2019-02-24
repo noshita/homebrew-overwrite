@@ -1,19 +1,19 @@
 class Neofetch < Formula
   desc "Fast, highly customisable system info script"
   homepage "https://github.com/dylanaraps/neofetch"
-  url "https://github.com/dylanaraps/neofetch/archive/4.0.2.tar.gz"
-  sha256 "3cd4db97d732dd91424b357166d38edccec236c21612b392318b48a3ffa29004"
+  url "https://github.com/dylanaraps/neofetch/archive/6.0.0.tar.gz"
+  sha256 "264a7689561bb498f97f10231959bdd8f7c873671bac2ffb660de9a5863b1c76"
   head "https://github.com/dylanaraps/neofetch.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "2dbb8cac5cec6d907af333f10ef6cfac4c2accdc59ee007a6f6a810228544659" => :high_sierra
-    sha256 "2dbb8cac5cec6d907af333f10ef6cfac4c2accdc59ee007a6f6a810228544659" => :sierra
-    sha256 "2dbb8cac5cec6d907af333f10ef6cfac4c2accdc59ee007a6f6a810228544659" => :el_capitan
+    sha256 "2d1213f610f53f86dad1a2232559efb129932bac0e2b0201ca092049bc548582" => :mojave
+    sha256 "2427e4319a73db71b2c8eaf7b2ef71ca4e7732054aef09d83e4215c854684388" => :high_sierra
+    sha256 "2427e4319a73db71b2c8eaf7b2ef71ca4e7732054aef09d83e4215c854684388" => :sierra
   end
 
-  depends_on "screenresolution" => :recommended
-  depends_on "imagemagick" => :recommended
+  depends_on "imagemagick"
+  depends_on "screenresolution"
 
   def install
     system "make", "install", "PREFIX=#{prefix}"
