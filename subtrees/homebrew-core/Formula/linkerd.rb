@@ -1,8 +1,8 @@
 class Linkerd < Formula
   desc "Drop-in RPC proxy designed for microservices"
   homepage "https://linkerd.io/"
-  url "https://github.com/linkerd/linkerd/releases/download/1.4.3/linkerd-1.4.3.tgz"
-  sha256 "93c0b00c16a4b7ad6606910153cf216c0a96bb836edb6cbebfbad78b13b89a2a"
+  url "https://github.com/linkerd/linkerd/releases/download/1.6.1/linkerd-1.6.1.tgz"
+  sha256 "103fd1c930abb537210eb61461e89bfc234bffff9f33a54183944e9ffdd00c74"
 
   bottle :unneeded
 
@@ -14,8 +14,7 @@ class Linkerd < Formula
     libexec.install "linkerd-#{version}-exec"
     bin.install_symlink libexec/"linkerd-#{version}-exec" => "linkerd"
 
-    pkgshare.mkpath
-    cp buildpath/"config/linkerd.yaml", pkgshare/"default.yaml"
+    pkgshare.install buildpath/"config/linkerd.yaml" => "default.yaml"
 
     etc.install "config" => "linkerd"
     etc.install "disco" => "linkerd/disco"
@@ -71,8 +70,8 @@ class Linkerd < Formula
     sleep 10
 
     begin
-      assert_match /It works!/, shell_output("curl -s -H 'Host: web' http://localhost:4140")
-      assert_match /Bad Gateway/, shell_output("curl -s -I -H 'Host: foo' http://localhost:4140")
+      assert_match "It works!", shell_output("curl -s -H 'Host: web' http://localhost:4140")
+      assert_match "Bad Gateway", shell_output("curl -s -I -H 'Host: foo' http://localhost:4140")
     ensure
       Process.kill("TERM", linkerd_pid)
       Process.wait(linkerd_pid)

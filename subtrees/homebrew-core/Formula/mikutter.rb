@@ -1,21 +1,23 @@
 class Mikutter < Formula
   desc "Extensible Twitter client"
   homepage "https://mikutter.hachune.net/"
-  url "https://mikutter.hachune.net/bin/mikutter.3.7.2.tar.gz"
-  sha256 "fa79ad090f11e94e7bb877aff2b3f8c33b9731ff48d92321cfdf0c32f934b69e"
+  url "https://mikutter.hachune.net/bin/mikutter.3.7.4.tar.gz"
+  sha256 "7695a76a809555b2688b56f5335834fd876f82ce1b645815ec2020aedbdff55c"
+  revision 2
   head "git://toshia.dip.jp/mikutter.git", :branch => "develop"
 
   bottle do
-    sha256 "d049ccbc82b043b4de9cdd17f2e4b13b66dbda9e04a33c67d989a2dceb4043a1" => :high_sierra
-    sha256 "71a35a07d9b56f05f37b53bc02cd9143e8bbf2231bf6b633a3f16176ae7e5d42" => :sierra
-    sha256 "135a20d2e807cfc6803fb2e1d779c058c0019171ada371afa6006d9e174e03a3" => :el_capitan
+    cellar :any
+    sha256 "14f2a2d9288a3bbc453864f707266373f546d27fecb4e95678f089c0d5a8f699" => :mojave
+    sha256 "8f5f8620e2dd2fbc12b15e886d0034640fcc82ac36b2a46f1761378ff4b12655" => :high_sierra
+    sha256 "6594762c87b71a9f8f7589cb390f2791b18200ea1a7f364de8040a4c9ed7406e" => :sierra
   end
 
   depends_on "gobject-introspection"
   depends_on "gtk+"
   depends_on "libidn"
-  depends_on "ruby"
-  depends_on "terminal-notifier" => :recommended
+  depends_on "ruby" if MacOS.version <= :high_sierra
+  depends_on "terminal-notifier"
 
   resource "addressable" do
     url "https://rubygems.org/gems/addressable-2.5.2.gem"
@@ -128,8 +130,8 @@ class Mikutter < Formula
   end
 
   resource "nokogiri" do
-    url "https://rubygems.org/gems/nokogiri-1.8.2.gem"
-    sha256 "382af505a11b735e97f52ec6279ea484be7a7560d5599e81def40943601fd515"
+    url "https://rubygems.org/gems/nokogiri-1.8.4.gem"
+    sha256 "ecad8473fbaebaadd060eec15a872fb67c4bd7c6d64904ebbe15d40113ad36c1"
   end
 
   resource "oauth" do
@@ -221,7 +223,7 @@ class Mikutter < Formula
       export GEM_HOME="#{HOMEBREW_PREFIX}/lib/mikutter/vendor"
       export GTK_PATH="#{HOMEBREW_PREFIX}/lib/gtk-2.0"
 
-      exec ruby "#{libexec}/mikutter.rb" "$@"
+      exec #{which("ruby")} "#{libexec}/mikutter.rb" "$@"
     EOS
   end
 

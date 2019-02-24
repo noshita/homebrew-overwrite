@@ -1,23 +1,22 @@
 class AircrackNg < Formula
   desc "Next-generation aircrack with lots of new features"
   homepage "https://aircrack-ng.org/"
-  url "https://download.aircrack-ng.org/aircrack-ng-1.2.tar.gz"
-  sha256 "794ffed5400f35cb78f3466eabb47546f050e0ac35287c174acce60763a0fa7c"
+  url "https://download.aircrack-ng.org/aircrack-ng-1.5.2.tar.gz"
+  sha256 "9e592fe7658046220e0ac0a6d05c4026903f3077b248893e0056ccbe4ee88241"
 
   bottle do
-    rebuild 1
-    sha256 "5df9c14d4a1ea1505a41e7dbbd07b320aa9f9a9d58e22b7e7bc4092f44dae1fb" => :high_sierra
-    sha256 "a6dfe739b361fccaad7a2c6690f7b20c70b1a14a783d4b0521514d0435302577" => :sierra
-    sha256 "0df26efd118d1ecf11af9a6191223f829f9bff8c2707f424adaf3e66fbe88ac5" => :el_capitan
+    sha256 "6aaae61586ea0f80f466e1eaa3740ff64cb5a68d457ee248c6561339778246bf" => :mojave
+    sha256 "795dfb0d851b602176fa1a68383afee62f6860fdbd868b515cbf7cf4fe010b7c" => :high_sierra
+    sha256 "e8302d2bb87a615d341dc907cf4a8e8f87f9fd560a28246a5b4a37230abe9d7b" => :sierra
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
   depends_on "pkg-config" => :build
-  depends_on "sqlite"
   depends_on "openssl"
   depends_on "pcre"
+  depends_on "sqlite"
 
   # Remove root requirement from OUI update script. See:
   # https://github.com/Homebrew/homebrew/pull/12755

@@ -3,21 +3,21 @@ class Snapcraft < Formula
 
   desc "Package any app for every Linux desktop, server, cloud or device"
   homepage "https://snapcraft.io/"
-  url "https://files.pythonhosted.org/packages/be/69/9fc4c20854d2732798b06fff9d4df74c71783c89ab9f93d1eba13a6a31d0/snapcraft-2.42.tar.gz"
-  sha256 "80249c14c727af2659626f3bfbaa25d36c74fe40cb07175b3acc758ba6434de3"
+  url "https://files.pythonhosted.org/packages/fc/c6/d3a59d1f08c0b8bc3d166bc6e0a26a29dd61627d2e6266bd81b26fc02142/snapcraft-3.0.1.tar.gz"
+  sha256 "c9914324749502dff5588f72a93ee05d47b14f2bd400d6234a4e2db22fd6922c"
 
   bottle do
     cellar :any
-    sha256 "fd9b7c9db2f3ec21d972fa33bb475a5fcaee1705e7c1772a2600c00424609721" => :high_sierra
-    sha256 "1c25ce5577f91cbbda88419a5402450110bfdedced97b048697f56b99ea93b91" => :sierra
-    sha256 "fe1f6333bafc5a7eb04d640e3fca19841ce878f809966f997597e0ed4f891112" => :el_capitan
+    sha256 "6b767bebc6a392621605477f6c6f0ef8ea8e264a4a7f3e53893c0eb9ded66a8b" => :mojave
+    sha256 "77a9f5b2fd096c878cf6e2d9de1e26cbc98603014c41640c491f48a68ca0eed0" => :high_sierra
+    sha256 "082b37eb35d4e2a00836150d1324df9eb1a55d2729febb51417bfde9352cbfe9" => :sierra
   end
 
   depends_on "libsodium"
   depends_on "libyaml"
   depends_on "lxc"
-  depends_on "squashfs"
   depends_on "python"
+  depends_on "squashfs"
 
   resource "certifi" do
     url "https://files.pythonhosted.org/packages/15/d4/2f888fc463d516ff7bf2379a4e9a552fef7f22a94147655d9b1097108248/certifi-2018.1.18.tar.gz"
@@ -115,8 +115,8 @@ class Snapcraft < Formula
   end
 
   resource "PyYAML" do
-    url "https://files.pythonhosted.org/packages/4a/85/db5a2df477072b2902b0eb892feb37d88ac635d36245a72a6a69b23b383a/PyYAML-3.12.tar.gz"
-    sha256 "592766c6303207a20efc445587778322d7f73b161bd994f227adaa341ba212ab"
+    url "https://files.pythonhosted.org/packages/9e/a3/1d13970c3f36777c583f136c136f804d70f500168edc1edea6daa7200769/PyYAML-3.13.tar.gz"
+    sha256 "3ef3092145e9b70e3ddd2c7ad59bdd0252a94dfe3949721633e41344de00a6bf"
   end
 
   resource "raven" do

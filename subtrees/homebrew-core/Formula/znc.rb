@@ -1,13 +1,14 @@
 class Znc < Formula
   desc "Advanced IRC bouncer"
   homepage "https://wiki.znc.in/ZNC"
-  url "https://znc.in/releases/archive/znc-1.7.0.tar.gz"
-  sha256 "c07e31439ac6b948a577bd61a9d5f61a6d191d387423779b937aa1404051b96f"
+  url "https://znc.in/releases/archive/znc-1.7.1.tar.gz"
+  sha256 "44cfea7158ea05dc2547c7c6bc22371e66c869def90351de0ab90a9c200d39c4"
+  revision 1
 
   bottle do
-    sha256 "c5993fa37883982d253b34f4f2381e283714ca09ef4f9a8b67848ba3de200046" => :high_sierra
-    sha256 "d62f0c6426254a99b644a7bc7abf0a4d4f17e477ed6f41dc9cd541518db4942b" => :sierra
-    sha256 "717c757ef458345931f626cef0a5bf7e4165328ba5808f91329214e36beb847d" => :el_capitan
+    sha256 "29762087ad3267dd6b7164aad34e6cbe6316efe0d5d858b6bb20405b89f37e05" => :mojave
+    sha256 "3fbeaad6f7f86d78aee001eb16f1093fa40a88cc9ccd4da4f29a35b06912d1e1" => :high_sierra
+    sha256 "b3bd651781f249b40cced788e3322a9ae09fd78d31ebd3bbfba073dd35666793" => :sierra
   end
 
   head do
@@ -18,19 +19,10 @@ class Znc < Formula
     depends_on "libtool" => :build
   end
 
-  option "with-debug", "Compile ZNC with debug support"
-  option "with-icu4c", "Build with icu4c for charset support"
-  option "with-python3", "Build with mod_python support, allowing Python ZNC modules"
-
-  deprecated_option "enable-debug" => "with-debug"
-  deprecated_option "with-python3" => "with-python"
-
   depends_on "pkg-config" => :build
+  depends_on "icu4c"
   depends_on "openssl"
-  depends_on "icu4c" => :optional
-  depends_on "python" => :optional
-
-  needs :cxx11
+  depends_on "python"
 
   def install
     ENV.cxx11
@@ -40,12 +32,8 @@ class Znc < Formula
     ENV.append "CXXFLAGS", "-std=c++11"
     ENV.append "CXXFLAGS", "-stdlib=libc++" if ENV.compiler == :clang
 
-    args = ["--prefix=#{prefix}"]
-    args << "--enable-debug" if build.with? "debug"
-    args << "--enable-python" if build.with? "python"
-
     system "./autogen.sh" if build.head?
-    system "./configure", *args
+    system "./configure", "--prefix=#{prefix}", "--enable-python"
     system "make", "install"
   end
 

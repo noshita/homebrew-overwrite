@@ -1,13 +1,14 @@
 class Rsyslog < Formula
   desc "Enhanced, multi-threaded syslogd"
   homepage "https://www.rsyslog.com/"
-  url "https://www.rsyslog.com/files/download/rsyslog/rsyslog-8.34.0.tar.gz"
-  sha256 "18330a9764c55d2501b847aad267292bd96c2b12fa5c3b92909bd8d4563c80a9"
+  url "https://www.rsyslog.com/files/download/rsyslog/rsyslog-8.37.0.tar.gz"
+  sha256 "295c289b4c8abd8f8f3fe35a83249b739cedabe82721702b910255f9faf147e7"
 
   bottle do
-    sha256 "cd53ebf44f879d8786fbdf6faa3af2e68a180b0b96a49c37e82dfe2c366f5b69" => :high_sierra
-    sha256 "3e7de1d3e48776cb66edc3fe9c67274d7be45c0b2bb5b5241477d1bd26001d8f" => :sierra
-    sha256 "e984aeeeca6c29591d314f15e99595a50b46835e922cca90291ed5c7695c2057" => :el_capitan
+    sha256 "86ca9ebf3b35b31e61464b02603532d29c2bbb4f74690c004cbe2e599d102d49" => :mojave
+    sha256 "a7830278d2bddc26ab55d32cf4b424f9ef46fe4e14d3a152594560b65e8cccc4" => :high_sierra
+    sha256 "162a2cff81e34d67cca2696f5b0b09a511b13c56236828eb2014f05f2e6416ff" => :sierra
+    sha256 "a46359fabb1218e33e0fbdddf71ebe7361504d1c40b5473a8484b2f5f4ed2784" => :el_capitan
   end
 
   depends_on "pkg-config" => :build
@@ -18,29 +19,8 @@ class Rsyslog < Formula
     sha256 "3544c757668b4a257825b3cbc26f800f59ef3c1ff2a260f40f96b48ab1d59e07"
   end
 
-  resource "liblogging" do
-    url "http://download.rsyslog.com/liblogging/liblogging-1.0.6.tar.gz"
-    sha256 "338c6174e5c8652eaa34f956be3451f7491a4416ab489aef63151f802b00bf93"
-  end
-
-  # Remove for > 8.34.0
-  # Fix "fatal error: 'liblogging/stdlog.h' file not found"
-  # Upstream PR 14 May 2018 "pass liblogging cflags when building fmhttp and
-  # imfile plugins"; see https://github.com/rsyslog/rsyslog/pull/2703
-  patch do
-    url "https://raw.githubusercontent.com/Homebrew/formula-patches/a4f4bb9/rsyslog/liblogging-cflags.diff"
-    sha256 "f5d02e928783e34d0784136e7315a831f09309544d9b49a7087468063447c736"
-  end
-
   def install
     resource("libfastjson").stage do
-      system "./configure", "--disable-dependency-tracking",
-                            "--disable-silent-rules",
-                            "--prefix=#{libexec}"
-      system "make", "install"
-    end
-
-    resource("liblogging").stage do
       system "./configure", "--disable-dependency-tracking",
                             "--disable-silent-rules",
                             "--prefix=#{libexec}"

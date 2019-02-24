@@ -1,20 +1,29 @@
 class GtkMacIntegration < Formula
   desc "Integrates GTK macOS applications with the Mac desktop"
   homepage "https://wiki.gnome.org/Projects/GTK+/OSX/Integration"
-  url "https://download.gnome.org/sources/gtk-mac-integration/2.1/gtk-mac-integration-2.1.2.tar.xz"
-  sha256 "68e682a3ba952e7d4b1cfa2c7147c5fcd76f8bd9792a567e175a619af5954af1"
+  url "https://download.gnome.org/sources/gtk-mac-integration/2.1/gtk-mac-integration-2.1.3.tar.xz"
+  sha256 "d5f72302daad1f517932194d72967a32e72ed8177cfa38aaf64f0a80564ce454"
 
   bottle do
-    sha256 "7c6926dc885b7c031398552069dc16bd63d2fe938d281d3f18a90a80de48ce16" => :high_sierra
-    sha256 "5856dcaf405cffb88541a0d9918285603978c334284e1cff41c9d0d08801936c" => :sierra
-    sha256 "23213e9b20f36cc8c95a344064e29968cd3dbca73f1d433c25636b6056e357ac" => :el_capitan
+    sha256 "bc2988431033aac212a91ebf5f24cb4186fa754392a394a0a18b21e37e82546b" => :mojave
+    sha256 "48784429c9f1a8edde39c21ed4fdc7aca9fa7163a02b66d9dc2e998b45e7dbb5" => :high_sierra
+    sha256 "708be6c171f2a5b0291350e9670efd03e4df32f9e1e743fa2d9531e7c1d85d77" => :sierra
+  end
+
+  head do
+    url "https://github.com/jralls/gtk-mac-integration.git"
+
+    depends_on "autoconf" => :build
+    depends_on "automake" => :build
+    depends_on "gtk-doc" => :build
+    depends_on "libtool" => :build
   end
 
   depends_on "gobject-introspection" => :build
   depends_on "pkg-config" => :build
   depends_on "gettext"
   depends_on "gtk+"
-  depends_on "gtk+3" => :recommended
+  depends_on "gtk+3"
   depends_on "pygtk"
 
   def install
@@ -23,12 +32,16 @@ class GtkMacIntegration < Formula
       --disable-silent-rules
       --prefix=#{prefix}
       --with-gtk2
+      --with-gtk3
       --enable-python=yes
       --enable-introspection=yes
     ]
 
-    args << (build.without?("gtk+3") ? "--without-gtk3" : "--with-gtk3")
-    system "./configure", *args
+    if build.head?
+      system "./autogen.sh", *args
+    else
+      system "./configure", *args
+    end
     system "make", "install"
   end
 

@@ -1,23 +1,29 @@
 class Openssh < Formula
   desc "OpenBSD freely-licensed SSH connectivity tools"
   homepage "https://www.openssh.com/"
-  url "https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-7.7p1.tar.gz"
-  mirror "https://mirror.vdms.io/pub/OpenBSD/OpenSSH/portable/openssh-7.7p1.tar.gz"
-  version "7.7p1"
-  sha256 "d73be7e684e99efcd024be15a30bffcbe41b012b2f7b3c9084aed621775e6b8f"
+  url "https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-7.9p1.tar.gz"
+  mirror "https://mirror.vdms.io/pub/OpenBSD/OpenSSH/portable/openssh-7.9p1.tar.gz"
+  version "7.9p1"
+  sha256 "6b4b3ba2253d84ed3771c8050728d597c91cfce898713beb7b64a305b6f11aad"
 
   bottle do
-    sha256 "d378e6ea62cc33ab02df2c7394c8b9dc90fa7ab7d0a54a2f5f9a1db4c6f69dd4" => :high_sierra
-    sha256 "f30f9b4163419d95b59e62dc6b55b956ab0612b49a654ace9fae3f67d18d3198" => :sierra
-    sha256 "8c163dd34c4fbde8de02c58ccca743966b4f755be40049740f604509d2135a3c" => :el_capitan
+    rebuild 1
+    sha256 "475cc4f47a24d63d2050b95a48c9a0c624eb86f0f8a4539b76b3f1a5ca92aa82" => :mojave
+    sha256 "f0cc3763b34a7e8e9a7249b635a10453789186192c77f4fa4af7416cd8ca5a48" => :high_sierra
+    sha256 "e7bf2327f5d5fef76694d2dae0bce415cf452050177611d462cf6ddc0ccda79d" => :sierra
   end
 
   # Please don't resubmit the keychain patch option. It will never be accepted.
   # https://github.com/Homebrew/homebrew-dupes/pull/482#issuecomment-118994372
 
+  depends_on "pkg-config" => :build
+  depends_on "ldns"
   depends_on "openssl"
-  depends_on "ldns" => :optional
-  depends_on "pkg-config" => :build if build.with? "ldns"
+
+  resource "com.openssh.sshd.sb" do
+    url "https://opensource.apple.com/source/OpenSSH/OpenSSH-209.50.1/com.openssh.sshd.sb"
+    sha256 "a273f86360ea5da3910cfa4c118be931d10904267605cdd4b2055ced3a829774"
+  end
 
   # Both these patches are applied by Apple.
   patch do
@@ -30,11 +36,6 @@ class Openssh < Formula
     sha256 "3505c58bf1e584c8af92d916fe5f3f1899a6b15cc64a00ddece1dc0874b2f78f"
   end
 
-  resource "com.openssh.sshd.sb" do
-    url "https://opensource.apple.com/source/OpenSSH/OpenSSH-209.50.1/com.openssh.sshd.sb"
-    sha256 "a273f86360ea5da3910cfa4c118be931d10904267605cdd4b2055ced3a829774"
-  end
-
   def install
     ENV.append "CPPFLAGS", "-D__APPLE_SANDBOX_NAMED_EXTERNAL__"
 
@@ -43,15 +44,14 @@ class Openssh < Formula
     inreplace "sandbox-darwin.c", "@PREFIX@/share/openssh", etc/"ssh"
 
     args = %W[
-      --with-libedit
-      --with-kerberos5
       --prefix=#{prefix}
       --sysconfdir=#{etc}/ssh
+      --with-ldns
+      --with-libedit
+      --with-kerberos5
       --with-pam
       --with-ssl-dir=#{Formula["openssl"].opt_prefix}
     ]
-
-    args << "--with-ldns" if build.with? "ldns"
 
     system "./configure", *args
     system "make"

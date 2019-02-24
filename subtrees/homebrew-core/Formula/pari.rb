@@ -1,13 +1,14 @@
 class Pari < Formula
   desc "Computer algebra system designed for fast computations in number theory"
   homepage "https://pari.math.u-bordeaux.fr/"
-  url "https://pari.math.u-bordeaux.fr/pub/pari/unix/pari-2.9.5.tar.gz"
-  sha256 "6b451825b41d2f8b29592c08d671999527bf936789c599d77b8dfdc663f1e617"
+  url "https://pari.math.u-bordeaux.fr/pub/pari/unix/pari-2.11.0.tar.gz"
+  sha256 "3835caccaa3e0c64764521032d89efeb8773cce841f6655fec6d58e790f4c9a1"
+  revision 1
 
   bottle do
-    sha256 "c8e1e3c1da64c35a7ecb8696e4cf31113112887fff6f1b16a193900f50ac73e6" => :high_sierra
-    sha256 "1ae613ef98c71ce691906dc7cf5282374bfa18cc669e8570b77152648bc3d8c7" => :sierra
-    sha256 "b5426e62d5db7181898d371c444889127e6e7a9336b40020ca65d51cb0f55006" => :el_capitan
+    sha256 "132614e46066837aa3d3a4661bbbcdc648dbb48ba1835873a58f54b8805d31f1" => :mojave
+    sha256 "0bca55f59df6cb9441bc5b49140392a089df20ec85d08452ca7966f395d71a73" => :high_sierra
+    sha256 "2f8f44aeaa83bf1ba107946b82b81e032305afd6db5d02b10a6027afb902c862" => :sierra
   end
 
   depends_on "gmp"

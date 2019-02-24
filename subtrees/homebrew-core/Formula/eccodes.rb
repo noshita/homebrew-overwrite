@@ -1,20 +1,19 @@
 class Eccodes < Formula
-  desc "Decode and encode messages in the GRIB 1/2 and  BUFR 3/4 formats"
-  homepage "https://software.ecmwf.int/wiki/display/ECC/ecCodes+Home"
-  url "https://software.ecmwf.int/wiki/download/attachments/45757960/eccodes-2.7.3-Source.tar.gz"
-  sha256 "6fab143dbb34604bb2e04d10143855c0906b00411c1713fd7ff5c35519b871db"
+  desc "Decode and encode messages in the GRIB 1/2 and BUFR 3/4 formats"
+  homepage "https://confluence.ecmwf.int/display/ECC"
+  url "https://software.ecmwf.int/wiki/download/attachments/45757960/eccodes-2.10.0-Source.tar.gz"
+  sha256 "bea3cb4caafca368538bc457075bbe848215085f3574cfcdf106d32e954d82d8"
 
   bottle do
-    sha256 "72319e250c54c1d6b1d652123c8274a872fd6c790456ba198ec91ede2c1afb69" => :high_sierra
-    sha256 "2f4b97fcdb043302d53e370df0faba8b258c91ba67ddff78cefbe8458f803567" => :sierra
-    sha256 "654f8cf80796ef2a45d29b3bce3d258fffbe260ddd81c87b515b9c7c24246537" => :el_capitan
+    sha256 "116835bc40fbeec77cd5fea00b64034621bab001a7bed3c50931518f0b91ea56" => :mojave
+    sha256 "7e57dd5d695eeddf30447e6beebabfb3c4e71754b5bd38418ef7d1c7471c14dd" => :high_sierra
+    sha256 "cf23afaaba4b4aba64650d3f291dfc0dda3ffc8c7ad4382147c3113bbb8141be" => :sierra
   end
 
   depends_on "cmake" => :build
   depends_on "gcc" # for gfortran
   depends_on "jasper"
   depends_on "libpng"
-  depends_on "numpy"
 
   conflicts_with "grib-api",
     :because => "eccodes and grib-api install the same binaries."

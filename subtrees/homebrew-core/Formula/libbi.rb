@@ -1,15 +1,16 @@
 class Libbi < Formula
   desc "Bayesian state-space modelling on parallel computer hardware"
   homepage "https://libbi.org/"
-  url "https://github.com/libbi/LibBi/archive/1.4.2.tar.gz"
-  sha256 "17824f6b466777a02d6bc6bb4704749fb64ce56ec4468b936086bc9901b5bf78"
-  head "https://github.com/libbi/LibBi.git"
+  url "https://github.com/lawmurray/LibBi/archive/1.4.4.tar.gz"
+  sha256 "37bf4d3a9686000442494204972d09504f27a8a840174c0f116b0cf2ff7713fd"
+  revision 2
+  head "https://github.com/lawmurray/LibBi.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "9c8b3892781b26ec1a62ab3055975d64b8556df710c84c104c11bbc34ae4f20d" => :high_sierra
-    sha256 "911c0770ea4bf64e38598c2c54213f1c95c7eb1c9469386141e1189ac468dbad" => :sierra
-    sha256 "e66f383e27774060a148af2a3031b4c4090e1e56f256f3483c5bdd3d22902b7e" => :el_capitan
+    sha256 "4021160fbebeabdd0cc74bb93fcc974496f97d70d391e65dd53e55f6c636f697" => :mojave
+    sha256 "2dcea74c906d7beef3f3c16f362a89b5972c63d58631f753c64580e34bdbdb98" => :high_sierra
+    sha256 "17351c606436ac0bb5ae291735186a7ce6ab5927b8e7f48d2b62c45ebbfb4f60" => :sierra
   end
 
   depends_on "automake"
@@ -109,6 +110,7 @@ class Libbi < Formula
     resources.each do |r|
       r.stage do
         next if r.name == "thrust"
+
         # need to set TT_ACCEPT=y for Template library for non-interactive install
         perl_flags = "TT_ACCEPT=y" if r.name == "Template"
         system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}", perl_flags

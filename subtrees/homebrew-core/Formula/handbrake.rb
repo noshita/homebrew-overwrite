@@ -1,14 +1,15 @@
 class Handbrake < Formula
   desc "Open-source video transcoder available for Linux, Mac, and Windows"
   homepage "https://handbrake.fr/"
-  url "https://download.handbrake.fr/releases/1.1.0/HandBrake-1.1.0-source.tar.bz2"
-  sha256 "a02e7c6f8bd8dc28eea4623663deb5971dcbca1ad59da9eb74aceb481d8c40da"
+  url "https://download.handbrake.fr/releases/1.2.1/HandBrake-1.2.1-source.tar.bz2"
+  sha256 "00316eec7bb29b88b8dd11b14581c99c35fd7a315f5bc8cc7f1eb144b2fa783d"
   head "https://github.com/HandBrake/HandBrake.git"
 
   bottle do
-    sha256 "66c8c4eff41eb5116fe8f868de296348e583975468155897a157153042d2a143" => :high_sierra
-    sha256 "9c927a8062dd2a2674ed809f44a65090bc7527227906967e04429769f17d6644" => :sierra
-    sha256 "cc8e3b2af4253294765ecab07bce0267674bf2ece7f749b97016af099d7f5269" => :el_capitan
+    cellar :any_skip_relocation
+    sha256 "36f36b1bc2347424d14c7e94231fd8b03cc8fff86f1e0710547a59cbc3f70788" => :mojave
+    sha256 "c3d9f1a25e8ae2becf69803614e426a13c8a5a99ed457cd4612b369636a8e460" => :high_sierra
+    sha256 "e333be946a7c65ad707b9f26c4a9dab4a6a3cba0fc689f0cabd075cec1037f0c" => :sierra
   end
 
   depends_on "autoconf" => :build
@@ -21,10 +22,6 @@ class Handbrake < Formula
   depends_on "yasm" => :build
 
   def install
-    # -march=native causes segfaults
-    # Reported 23 May 2018 https://github.com/HandBrake/HandBrake/issues/1351
-    ENV["HOMEBREW_OPTFLAGS"] = "-march=#{Hardware.oldest_cpu}" unless build.bottle?
-
     system "./configure", "--prefix=#{prefix}",
                           "--disable-xcode",
                           "--disable-gtk"

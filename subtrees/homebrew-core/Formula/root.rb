@@ -1,33 +1,45 @@
 class Root < Formula
   desc "Object oriented framework for large scale data analysis"
-  homepage "https://root.cern.ch"
-  url "https://root.cern.ch/download/root_v6.14.00.source.tar.gz"
-  version "6.14.00"
-  sha256 "7946430373489310c2791ff7a3520e393dc059db1371272bcd9d9cf0df347a0b"
-  head "http://root.cern.ch/git/root.git"
+  homepage "https://root.cern.ch/"
+  url "https://root.cern.ch/download/root_v6.16.00.source.tar.gz"
+  version "6.16.00"
+  sha256 "2a45055c6091adaa72b977c512f84da8ef92723c30837c7e2643eecc9c5ce4d8"
+  head "https://github.com/root-project/root.git"
 
   bottle do
-    sha256 "f61a6854f0b2fdefd692390d10721cd35aad69c696628e0a378468986de9a4c3" => :high_sierra
-    sha256 "ca54c9feda676eb4a51fa636e89e488341a25a53bcf446680e86baadf524fe57" => :sierra
-    sha256 "a4214d56d0f8854106eb887ff44093444e39d1ce1b9d9466f226bf62ff27088b" => :el_capitan
+    sha256 "b4654cd7f0f7e0190d311e6b3b7734a1cd247b01c5a6f233c8916929ad151bdc" => :mojave
+    sha256 "fa4c773cdcdf4f4705fd2f0f5009e2dc4e89f8927dd0ebba9c356e0e53f83d8b" => :high_sierra
+    sha256 "91142b7de7f49991589cb6f2ca1a0f55857fc11314ccaf8f70c0fea1b26709e8" => :sierra
+  end
+
+  # https://github.com/Homebrew/homebrew-core/issues/30726
+  # strings libCling.so | grep Xcode:
+  #  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1
+  #  /Applications/Xcode.app/Contents/Developer
+  pour_bottle? do
+    reason "The bottle hardcodes locations inside Xcode.app"
+    satisfy do
+      MacOS::Xcode.installed? &&
+        MacOS::Xcode.prefix.to_s.include?("/Applications/Xcode.app/")
+    end
   end
 
   depends_on "cmake" => :build
   depends_on "davix"
   depends_on "fftw"
-  depends_on "gcc" # for gfortran.
+  depends_on "gcc" # for gfortran
   depends_on "graphviz"
   depends_on "gsl"
+  # Temporarily depend on Homebrew libxml2 to work around a brew issue:
+  # https://github.com/Homebrew/brew/issues/5068
+  depends_on "libxml2" if MacOS.version >= :mojave
   depends_on "lz4"
   depends_on "openssl"
   depends_on "pcre"
+  depends_on "python"
   depends_on "tbb"
   depends_on "xrootd"
-  depends_on "xz" # For LZMA.
-  depends_on "python" => :recommended
-  depends_on "python@2" => :optional
-
-  needs :cxx11
+  depends_on "xz" # for LZMA
 
   skip_clean "bin"
 
@@ -43,55 +55,35 @@ class Root < Formula
               "http://lcgpackages",
               "https://lcgpackages"
 
+    py_exe = Utils.popen_read("which python3").strip
+    py_prefix = Utils.popen_read("python3 -c 'import sys;print(sys.prefix)'").chomp
+    py_inc = Utils.popen_read("python3 -c 'from distutils import sysconfig;print(sysconfig.get_python_inc(True))'").chomp
+
     args = std_cmake_args + %W[
-      -Dgnuinstall=ON
+      -DCLING_CXX_PATH=clang++
       -DCMAKE_INSTALL_ELISPDIR=#{elisp}
+      -DPYTHON_EXECUTABLE=#{py_exe}
+      -DPYTHON_INCLUDE_DIR=#{py_inc}
+      -DPYTHON_LIBRARY=#{py_prefix}/Python
+      -Dbuiltin_cfitsio=OFF
       -Dbuiltin_freetype=ON
       -Ddavix=ON
       -Dfftw3=ON
+      -Dfitsio=OFF
       -Dfortran=ON
       -Dgdml=ON
+      -Dgnuinstall=ON
+      -Dimt=ON
       -Dmathmore=ON
       -Dminuit2=ON
       -Dmysql=OFF
+      -Dpgsql=OFF
+      -Dpython=ON
       -Droofit=ON
       -Dssl=ON
-      -Dimt=ON
+      -Dtmva=ON
       -Dxrootd=ON
     ]
-
-    if build.with?("python") && build.with?("python@2")
-      odie "Root: Does not support building both python 2 and 3 wrappers"
-    elsif build.with?("python") || build.with?("python@2")
-      if build.with? "python@2"
-        ENV.prepend_path "PATH", Formula["python@2"].opt_libexec/"bin"
-        python_executable = Utils.popen_read("which python").strip
-        python_version = Language::Python.major_minor_version("python")
-      elsif build.with? "python"
-        python_executable = Utils.popen_read("which python3").strip
-        python_version = Language::Python.major_minor_version("python3")
-      end
-
-      python_prefix = Utils.popen_read("#{python_executable} -c 'import sys;print(sys.prefix)'").chomp
-      python_include = Utils.popen_read("#{python_executable} -c 'from distutils import sysconfig;print(sysconfig.get_python_inc(True))'").chomp
-      args << "-Dpython=ON"
-
-      # cmake picks up the system's python dylib, even if we have a brewed one
-      if File.exist? "#{python_prefix}/Python"
-        python_library = "#{python_prefix}/Python"
-      elsif File.exist? "#{python_prefix}/lib/lib#{python_version}.a"
-        python_library = "#{python_prefix}/lib/lib#{python_version}.a"
-      elsif File.exist? "#{python_prefix}/lib/lib#{python_version}.dylib"
-        python_library = "#{python_prefix}/lib/lib#{python_version}.dylib"
-      else
-        odie "No libpythonX.Y.{a,dylib} file found!"
-      end
-      args << "-DPYTHON_EXECUTABLE='#{python_executable}'"
-      args << "-DPYTHON_INCLUDE_DIR='#{python_include}'"
-      args << "-DPYTHON_LIBRARY='#{python_library}'"
-    else
-      args << "-Dpython=OFF"
-    end
 
     mkdir "builddir" do
       system "cmake", "..", *args
@@ -139,9 +131,8 @@ class Root < Formula
     assert_equal "\nProcessing test.C...\nHello, world!\n",
                  shell_output("/bin/bash test.bash")
 
-    if build.with? "python"
-      ENV["PYTHONPATH"] = lib/"root"
-      system "python3", "-c", "import ROOT"
-    end
+    # Test Python module
+    ENV["PYTHONPATH"] = lib/"root"
+    system "python3", "-c", "import ROOT"
   end
 end

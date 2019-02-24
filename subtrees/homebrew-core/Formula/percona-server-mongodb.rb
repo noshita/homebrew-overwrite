@@ -1,23 +1,23 @@
 class PerconaServerMongodb < Formula
   desc "Drop-in MongoDB replacement"
   homepage "https://www.percona.com"
-  url "https://www.percona.com/downloads/percona-server-mongodb-3.6/percona-server-mongodb-3.6.4-1.2/source/tarball/percona-server-mongodb-3.6.4-1.2.tar.gz"
-  version "3.6.4-1.2"
-  sha256 "8276a5e80c41f69f5b0a680e050149b9f018e8a2b70394e794921ba618ae2900"
+  url "https://www.percona.com/downloads/percona-server-mongodb-3.6/percona-server-mongodb-3.6.6-1.4/source/tarball/percona-server-mongodb-3.6.6-1.4.tar.gz"
+  version "3.6.6-1.4"
+  sha256 "a30d3932c449b61df049807a51d7fbaf6c3534b68116e82829f63049dff69d2a"
 
   bottle do
-    sha256 "cb59342b10efa7cb9d749939797e6dfd0e33b71052b073c8554110408b28489b" => :high_sierra
-    sha256 "a45fb71fc4b80752d02fea97873753e3681bfb2b6ed53ca49ab283caa10f50a5" => :sierra
+    cellar :any
+    rebuild 1
+    sha256 "65e23fd9b4e0a03964950fa1d0323e3730c41d47c511e3f7ef8c08352538e2de" => :mojave
+    sha256 "2908790361d2e6248f0505c6e7997f6fb45f33e436a6eb8c35e42fc49625486d" => :high_sierra
+    sha256 "f43cd51a2678db2ca1a1ef80076bd029681c91cc8ccb176dc9931b1638b1db82" => :sierra
   end
 
-  option "with-boost", "Compile using installed boost, not the version shipped with this formula"
-  option "with-sasl", "Compile with SASL support"
-
-  depends_on "boost" => :optional
   depends_on "go" => :build
-  depends_on :macos => :sierra
+  depends_on "pkg-config" => :build
   depends_on "scons" => :build
-  depends_on "openssl" => :recommended
+  depends_on :macos => :sierra
+  depends_on "openssl"
 
   conflicts_with "mongodb",
     :because => "percona-server-mongodb and mongodb install the same binaries."
@@ -28,8 +28,8 @@ class PerconaServerMongodb < Formula
   end
 
   resource "PyYAML" do
-    url "https://files.pythonhosted.org/packages/4a/85/db5a2df477072b2902b0eb892feb37d88ac635d36245a72a6a69b23b383a/PyYAML-3.12.tar.gz"
-    sha256 "592766c6303207a20efc445587778322d7f73b161bd994f227adaa341ba212ab"
+    url "https://files.pythonhosted.org/packages/9e/a3/1d13970c3f36777c583f136c136f804d70f500168edc1edea6daa7200769/PyYAML-3.13.tar.gz"
+    sha256 "3ef3092145e9b70e3ddd2c7ad59bdd0252a94dfe3949721633e41344de00a6bf"
   end
 
   resource "typing" do
@@ -57,42 +57,28 @@ class PerconaServerMongodb < Formula
         s.gsub! "$(git rev-parse HEAD)", "homebrew"
       end
 
-      args = %w[]
+      ENV["LIBRARY_PATH"] = Formula["openssl"].opt_lib
+      ENV["CPATH"] = Formula["openssl"].opt_include
 
-      if build.with? "openssl"
-        args << "ssl"
-        ENV["LIBRARY_PATH"] = Formula["openssl"].opt_lib
-        ENV["CPATH"] = Formula["openssl"].opt_include
-      end
-
-      args << "sasl" if build.with? "sasl"
-
-      system "./build.sh", *args
+      system "./build.sh", "ssl"
     end
 
     (buildpath/"src/mongo-tools").install Dir["src/mongo/gotools/bin/*"]
 
     args = %W[
       --prefix=#{prefix}
+      --ssl
+      --use-new-tools
       -j#{ENV.make_jobs}
+      CC=#{ENV.cc}
+      CXX=#{ENV.cxx}
+      CCFLAGS=-I#{Formula["openssl"].opt_include}
+      LINKFLAGS=-L#{Formula["openssl"].opt_lib}
     ]
 
-    args << "CC=#{ENV.cc}"
-    args << "CXX=#{ENV.cxx}"
-
-    args << "--use-sasl-client" if build.with? "sasl"
-    args << "--use-system-boost" if build.with? "boost"
-    args << "--use-new-tools"
     args << "--disable-warnings-as-errors" if MacOS.version >= :yosemite
 
-    if build.with? "openssl"
-      args << "--ssl"
-
-      args << "CCFLAGS=-I#{Formula["openssl"].opt_include}"
-      args << "LINKFLAGS=-L#{Formula["openssl"].opt_lib}"
-    end
-
-    scons "install", *args
+    system "scons", "install", *args
 
     (buildpath/"mongod.conf").write <<~EOS
       systemLog:

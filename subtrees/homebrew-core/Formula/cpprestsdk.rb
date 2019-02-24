@@ -1,21 +1,22 @@
 class Cpprestsdk < Formula
   desc "C++ libraries for cloud-based client-server communication"
   homepage "https://github.com/Microsoft/cpprestsdk"
-  url "https://github.com/Microsoft/cpprestsdk/archive/v2.10.2.tar.gz"
-  sha256 "fb0b611007732d8de9528bc37bd67468e7ef371672f89c88f225f73cdc4ffcf1"
-
+  # pull from git tag to get submodules
+  url "https://github.com/Microsoft/cpprestsdk.git",
+      :tag      => "v2.10.8",
+      :revision => "204a52610234ac5180e80a6883b62c0ad085f51e"
   head "https://github.com/Microsoft/cpprestsdk.git", :branch => "development"
 
   bottle do
     cellar :any
-    sha256 "d14bed2a2b49d91649d9fc8aa9708b1dc37b3c5b2b8bffcbdda79c2df8542319" => :high_sierra
-    sha256 "f72554353c248a4f479be76e8382fef549c9abb2690445adb6bcb49d8f867bd1" => :sierra
-    sha256 "53b4cdfd9b0b964a1803920d02ae066a4ddb2be58e68477d34906ba44048e52a" => :el_capitan
+    sha256 "8e324363564023e408419aa863e195dbf53b9d13631e18861e8953016b0e9763" => :mojave
+    sha256 "9948512053df55dbad7d8c19a011e111da9f5068ac482fc6c3abc2d3e78afbc1" => :high_sierra
+    sha256 "778ad062735d15707e11a3a7a0c6628d7d948fead333100be5c6ad9c13ce7456" => :sierra
   end
 
+  depends_on "cmake" => :build
   depends_on "boost"
   depends_on "openssl"
-  depends_on "cmake" => :build
 
   def install
     system "cmake", "-DBUILD_SAMPLES=OFF", "-DBUILD_TESTS=OFF", "Release", *std_cmake_args

@@ -1,22 +1,23 @@
 class Ccache < Formula
   desc "Object-file caching compiler wrapper"
   homepage "https://ccache.samba.org/"
-  url "https://www.samba.org/ftp/ccache/ccache-3.4.2.tar.xz"
-  sha256 "18a8b14367d63d3d37fb6c33cba60e1b7fcd7a63d608df97c9771ae0d234fee2"
+  url "https://www.samba.org/ftp/ccache/ccache-3.6.tar.xz"
+  sha256 "a6b129576328fcefad00cb72035bc87bc98b6a76aec0f4b59bed76d67a399b1f"
 
   bottle do
-    sha256 "279961566bd797e5673c959161079c155044bb9091585890ece18d9ce557de45" => :high_sierra
-    sha256 "9d9fd55841f1967739949493c453260243a49d2e78af2ac3d1f24c878096c254" => :sierra
-    sha256 "02fabd715abe67071a46f6fda9f531455bc0d357202b025516c8655349bb614a" => :el_capitan
+    cellar :any_skip_relocation
+    sha256 "9ffb4e5b9e87a8bfb39bc03190153d9473f8b8836c599677dca9b262b06b97c5" => :mojave
+    sha256 "930950117067d55ea74f0b06bcb445f0447950387deff38d0ea3d4302d9c5f2b" => :high_sierra
+    sha256 "3521a15db974af0b2d676549589cbf3a09045ac8eabd2d1a3e5930c04376db90" => :sierra
   end
 
   head do
     url "https://github.com/ccache/ccache.git"
 
+    depends_on "asciidoc" => :build
     depends_on "autoconf" => :build
     depends_on "automake" => :build
     depends_on "libtool" => :build
-    depends_on "asciidoc" => :build
   end
 
   def install

@@ -4,11 +4,13 @@ class Gawk < Formula
   url "https://ftp.gnu.org/gnu/gawk/gawk-4.2.1.tar.xz"
   mirror "https://ftpmirror.gnu.org/gawk/gawk-4.2.1.tar.xz"
   sha256 "d1119785e746d46a8209d28b2de404a57f983aa48670f4e225531d3bdc175551"
+  revision 1
 
   bottle do
-    sha256 "617115fcba047189d0a86aad82382768fec90a49c9d86f2fb944aec440ea64b2" => :high_sierra
-    sha256 "f60a61f057eefb9114f8080460fdb31d71b1f3fd6dd6daf855f380dfb4ae4fa1" => :sierra
-    sha256 "aacfd8339f28ace56c4145cddd18986b050a14f408cdceb90d05eeb1bcf08590" => :el_capitan
+    rebuild 1
+    sha256 "7c75090bc176f309855c5eaf4a7b11c184b7619971fa9cff88272cd79952ab7d" => :mojave
+    sha256 "f1c8e8d852bfd156056b3dea4b80704b707adfd742795ccfd47ca33e5ab9a1dd" => :high_sierra
+    sha256 "ca8c762e95dcd6733fd49d20be8733cf179d4b3c4e0ec9bc9ffb3c54cfdea9c0" => :sierra
   end
 
   depends_on "gettext"
@@ -23,6 +25,9 @@ class Gawk < Formula
     system "make"
     system "make", "check"
     system "make", "install"
+
+    (libexec/"gnubin").install_symlink bin/"gawk" => "awk"
+    (libexec/"gnuman/man1").install_symlink man1/"gawk.1" => "awk.1"
   end
 
   test do

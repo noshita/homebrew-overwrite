@@ -1,31 +1,30 @@
 class Pypy < Formula
   desc "Highly performant implementation of Python 2 in Python"
   homepage "https://pypy.org/"
-  url "https://bitbucket.org/pypy/pypy/downloads/pypy2-v6.0.0-src.tar.bz2"
-  sha256 "6097ec5ee23d0d34d8cd27a1072bed041c8a080ad48731190a03a2223029212d"
+  url "https://bitbucket.org/pypy/pypy/downloads/pypy2.7-v7.0.0-src.tar.bz2"
+  sha256 "f51d8bbfc4e73a8a01820b7871a45d13c59f1399822cdf8a19388c69eb20c18c"
   head "https://bitbucket.org/pypy/pypy", :using => :hg
 
   bottle do
     cellar :any
-    sha256 "d654483d9b35d9d910d9d800381c24f241d6ea01abc32404480d676ac9fa15f1" => :high_sierra
-    sha256 "855930f3eb9f9a544f15ea56f03c95b78bdab0e210458cac8fa15a080e7b2e40" => :sierra
-    sha256 "afde0515da46850a2f991741985d2cd1498ec0f8e285985861b80620812ae746" => :el_capitan
+    sha256 "5446e1bf08b77035e2982adfa7a94f847aaf48eb5b2136f255f1ca91ae0bca43" => :mojave
+    sha256 "88384d57033fc8acc7072569097895100f8669441f955ddae1c32f47fd0a733d" => :high_sierra
+    sha256 "5335f7b26af38dff21554abea9b7fd3aa9781fc3b4521ac862334742b72eeb06" => :sierra
   end
 
-  option "without-bootstrap", "Translate Pypy with system Python instead of " \
-                              "downloading a Pypy binary distribution to " \
-                              "perform the translation (adds 30-60 minutes " \
-                              "to build)"
-
-  depends_on :arch => :x86_64
   depends_on "pkg-config" => :build
-  depends_on "gdbm" => :recommended
-  depends_on "sqlite" => :recommended
+  depends_on :arch => :x86_64
+  depends_on "gdbm"
+  # pypy does not find system libffi, and its location cannot be given
+  # as a build option
+  depends_on "libffi" if DevelopmentTools.clang_build_version >= 1000
   depends_on "openssl"
+  depends_on "sqlite"
 
   resource "bootstrap" do
-    url "https://bitbucket.org/pypy/pypy/downloads/pypy-2.5.0-osx64.tar.bz2"
-    sha256 "30b392b969b54cde281b07f5c10865a7f2e11a229c46b8af384ca1d3fe8d4e6e"
+    url "https://bitbucket.org/pypy/pypy/downloads/pypy2-v6.0.0-osx64.tar.bz2"
+    version "6.0.0"
+    sha256 "d7dc443e6bb9a45212e8d8f5a63e9f6ce23f1d88c50709efea1c75b76c8bc186"
   end
 
   resource "setuptools" do
@@ -38,21 +37,16 @@ class Pypy < Formula
     sha256 "f2bd08e0cd1b06e10218feaf6fef299f473ba706582eb3bd9d52203fdbd7ee68"
   end
 
-  # https://bugs.launchpad.net/ubuntu/+source/gcc-4.2/+bug/187391
-  fails_with :gcc
-
   def install
+    ENV.append "CFLAGS", "-I#{MacOS.sdk_path}/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"
     # Having PYTHONPATH set can cause the build to fail if another
     # Python is present, e.g. a Homebrew-provided Python 2.x
     # See https://github.com/Homebrew/homebrew/issues/24364
     ENV["PYTHONPATH"] = ""
     ENV["PYPY_USESSION_DIR"] = buildpath
 
-    python = "python"
-    if build.with?("bootstrap") && MacOS.prefer_64_bit?
-      resource("bootstrap").stage buildpath/"bootstrap"
-      python = buildpath/"bootstrap/bin/pypy"
-    end
+    resource("bootstrap").stage buildpath/"bootstrap"
+    python = buildpath/"bootstrap/bin/pypy"
 
     cd "pypy/goal" do
       system python, buildpath/"rpython/bin/rpython",
@@ -63,9 +57,8 @@ class Pypy < Formula
     libexec.mkpath
     cd "pypy/tool/release" do
       package_args = %w[--archive-name pypy --targetdir .]
-      package_args << "--without-gdbm" if build.without? "gdbm"
       system python, "package.py", *package_args
-      system "tar", "-C", libexec.to_s, "--strip-components", "1", "-xzf", "pypy.tar.bz2"
+      system "tar", "-C", libexec.to_s, "--strip-components", "1", "-xf", "pypy.tar.bz2"
     end
 
     (libexec/"lib").install libexec/"bin/libpypy-c.dylib"

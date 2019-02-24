@@ -3,12 +3,14 @@ class Wpscan < Formula
   homepage "https://wpscan.org"
   url "https://github.com/wpscanteam/wpscan/archive/2.9.4.tar.gz"
   sha256 "ad066b48565e82208d5e0451891366f6a9b9a3648d149d14c83d00f4712094d3"
+  revision 1
   head "https://github.com/wpscanteam/wpscan.git"
 
   bottle do
-    sha256 "4ec2e3b27d79d68cd52fa7ea222ec1d44f45f11b4a756e6f78fd578cd2bde542" => :high_sierra
-    sha256 "19ae05c1e0ab1f90ed41fbcb320d96a41fa43012f39ab4ac7e714148c802119a" => :sierra
-    sha256 "41b2171f3609acf4e10770809b79dbd11c7ee6a1c2f384b0d8ef04767f7d5e93" => :el_capitan
+    cellar :any
+    sha256 "e26e73927d6b65a6ea754407b398afc408737585281840304f6fdca40e32af66" => :mojave
+    sha256 "3b73076297580ca90725175015d8ac4ce26caa557f0f2cbbe0392b67ec090905" => :high_sierra
+    sha256 "7289430447efb7be22a729ef3d2147702c770984e4b96b61607a06aea8e40ef3" => :sierra
   end
 
   depends_on "ruby"
@@ -32,8 +34,9 @@ class Wpscan < Formula
 
     (bin/"wpscan").write <<~EOS
       #!/bin/bash
-      GEM_HOME=#{libexec} BUNDLE_GEMFILE=#{libexec}/Gemfile \
-        exec #{bundle} exec ruby #{libexec}/wpscan.rb "$@"
+      GEM_HOME="#{libexec}" BUNDLE_GEMFILE="#{libexec}/Gemfile" \\
+        exec "#{bundle}" exec "#{Formula["ruby"].opt_bin}/ruby" \\
+        "#{libexec}/wpscan.rb" "$@"
     EOS
   end
 

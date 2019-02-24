@@ -3,13 +3,13 @@ class Mimic < Formula
   homepage "https://mimic.mycroft.ai"
   url "https://github.com/MycroftAI/mimic/archive/1.2.0.2.tar.gz"
   sha256 "6adcc9911b09d6e9513add41ad9dfc0893ece277f556419869520a0f0708c102"
-  revision 3
+  revision 5
 
   bottle do
     cellar :any
-    sha256 "26b8f664a926f40d85afae92e0c3a4f5035017373b7b3129ca9d2fe961a0169e" => :high_sierra
-    sha256 "4b81c2894454ce34ff155244f88fdabf542519e13befdaa55e89bac0e126b707" => :sierra
-    sha256 "da7eca33821161618bc078a46ea315c713cb087ec5ecc17c5f43ebd95e9d152e" => :el_capitan
+    sha256 "a4cef5d7b056865ff6d0b8c5a009a8d2e1037fd456819544081f9cd79ba8a8a3" => :mojave
+    sha256 "8405d021a89307dceade05dbae580dfbc0a8ba804259e6d9a3aa02ca27e9962e" => :high_sierra
+    sha256 "09ed32fa5a02c7f3bd7137041712660b3cad1cf7bb9552eb83a02164953f8bac" => :sierra
   end
 
   depends_on "autoconf" => :build

@@ -1,12 +1,13 @@
 class Kontena < Formula
   desc "Command-line client for Kontena container orchestration platform"
   homepage "https://kontena.io/"
+  revision 1
   head "https://github.com/kontena/kontena.git"
 
   stable do
     url "https://github.com/kontena/kontena.git",
-        :tag => "v1.5.2",
-        :revision => "7232ab4f871c544eec1c8e32276bfd910480248f"
+        :tag      => "v1.5.4",
+        :revision => "8d68c77012f4de770c9e14653d5db63c64fac83f"
 
     resource "clamp" do
       url "https://rubygems.org/gems/clamp-1.2.1.gem"
@@ -140,10 +141,9 @@ class Kontena < Formula
   end
 
   bottle do
-    cellar :any
-    sha256 "c92862caf4138ce33079802ba274904074fd866767695dbc7c863386c5c27849" => :high_sierra
-    sha256 "3acd8e330a508eeda7214bd5bbc18398b9973063c1e853dcf5b6e2242ceeb753" => :sierra
-    sha256 "cfc0dc9927c211e1466af5651f43586d24fcb4d95bd19405cdf7125cffa4d381" => :el_capitan
+    sha256 "170a42416de88a77d260b3dd2b9d7cfb1820fc52b1d51de6ea21d130a617eb55" => :mojave
+    sha256 "40a456f4b501756fa04f59ffa5ff789fb34e2cef04e56ac7b068e9fc25663e3b" => :high_sierra
+    sha256 "f4fc71532c035c564bbbfdddef58ff75f601bf4d34fefcb6ff5a166cb4c2a550" => :sierra
   end
 
   depends_on "ruby" if MacOS.version <= :sierra

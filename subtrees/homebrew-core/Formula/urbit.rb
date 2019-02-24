@@ -1,15 +1,15 @@
 class Urbit < Formula
   desc "Personal cloud computer"
   homepage "https://urbit.org"
+  # pull from git tag to get submodules
   url "https://github.com/urbit/urbit.git",
-      :tag => "urbit-0.6.0",
-      :revision => "7633b5cc9cf249d873f16f08c09a1ee10a4f24d2"
+      :tag      => "v0.7.3",
+      :revision => "ab92c583a83901800344cdd52774a1b1d8d23841"
 
   bottle do
-    cellar :any
-    sha256 "1f63270c438e77f54190e37ef7c2ee65cb56f9a0f34c752921a57aa4ebca4029" => :high_sierra
-    sha256 "663d154873ba029384388b447fb035de0106913e0dab6ca6954bec675ab8bd23" => :sierra
-    sha256 "f87e0b247871c0a9ba4ebb2904e44480160ecaf49f5efc12821d76fa5755b6fe" => :el_capitan
+    sha256 "da35f7b7f69ef724abf6f7e4431168e3379b27371ed56cb2abaedf8b053db348" => :mojave
+    sha256 "ef8ad3372a93fc911ba1877a939ef3ef98a985c8a382bdf21d4dd09bb070d9aa" => :high_sierra
+    sha256 "40253792b8d70a87d93202da89d9c827e48e69cb6ea57c0f089f91d733dc4372" => :sierra
   end
 
   depends_on "meson" => :build
@@ -19,7 +19,6 @@ class Urbit < Formula
   depends_on "libsigsegv"
   depends_on "libuv"
   depends_on "openssl"
-  depends_on "re2c"
 
   def install
     system "./scripts/build"

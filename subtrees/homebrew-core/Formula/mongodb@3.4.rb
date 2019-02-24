@@ -1,38 +1,34 @@
 class MongodbAT34 < Formula
   desc "High-performance, schema-free, document-oriented database"
   homepage "https://www.mongodb.org/"
-
-  url "https://fastdl.mongodb.org/src/mongodb-src-r3.4.14.tar.gz"
-  sha256 "bbed7821560cc3c9e3215708e34243e20d490891b08a39f216188398ede9d790"
+  # do not upgrade to versions >3.4.18 as they are under the SSPL which is not
+  # an open-source license.
+  url "https://fastdl.mongodb.org/src/mongodb-src-r3.4.18.tar.gz"
+  sha256 "a1c17e9977307752ddac4b06bcb65be177035057c21955df5a65e2db74a20856"
 
   bottle do
-    sha256 "a3a784e75234eb5651a4b1bf3a4cef4ad7f4df70f75d6ab827930d31c9b1d2f6" => :high_sierra
-    sha256 "13b9f0745052a6a1aef4f624c810c05c16817e966ae564a9bc7b0cb55ff4e3d4" => :sierra
-    sha256 "83c48d38953e20c8838b5b3471d9f93dccae76328e2b2a8e25002c8f3ade582a" => :el_capitan
+    cellar :any
+    rebuild 1
+    sha256 "fb3ce36a4fa8767b53d49914000a0985934d7091a63e9e630fada9704fa861cd" => :mojave
+    sha256 "5914b8f9b37c4c7b66c533f6a5fb3e643a775e6c6eb839a6b2993b5bf51665a6" => :high_sierra
+    sha256 "023c524acb02fa97d24b0312310ae8dcc3cd15bba7252d2a599cf1221182e406" => :sierra
   end
 
   keg_only :versioned_formula
 
-  option "with-boost", "Compile using installed boost, not the version shipped with mongodb"
-  option "with-sasl", "Compile with SASL support"
-
-  depends_on "boost" => :optional
   depends_on "go" => :build
-  depends_on :macos => :mountain_lion
+  depends_on "pkg-config" => :build
   depends_on "scons" => :build
-  depends_on "openssl" => :recommended
 
-  needs :cxx11
+  depends_on "openssl"
 
   def install
-    ENV.cxx11 if MacOS.version < :mavericks
-
     (buildpath/".brew_home/Library/Python/2.7/lib/python/site-packages/vendor.pth").write <<~EOS
       import site; site.addsitedir("#{buildpath}/vendor/lib/python2.7/site-packages")
     EOS
 
-    # New Go tools have their own build script but the server scons "install" target is still
-    # responsible for installing them.
+    # New Go tools have their own build script but the server scons "install"
+    # target is still responsible for installing them.
 
     cd "src/mongo/gotools" do
       inreplace "build.sh" do |s|
@@ -40,44 +36,30 @@ class MongodbAT34 < Formula
         s.gsub! "$(git rev-parse HEAD)", "homebrew"
       end
 
-      args = %w[]
+      ENV["LIBRARY_PATH"] = Formula["openssl"].opt_lib
+      ENV["CPATH"] = Formula["openssl"].opt_include
 
-      if build.with? "openssl"
-        args << "ssl"
-        ENV["LIBRARY_PATH"] = Formula["openssl"].opt_lib
-        ENV["CPATH"] = Formula["openssl"].opt_include
-      end
-
-      args << "sasl" if build.with? "sasl"
-
-      system "./build.sh", *args
+      system "./build.sh", "ssl"
     end
 
     (buildpath/"src/mongo-tools").install Dir["src/mongo/gotools/bin/*"]
 
     args = %W[
-      --prefix=#{prefix}
       -j#{ENV.make_jobs}
+      --build-mongoreplay=true
+      --osx-version-min=#{MacOS.version}
+      --prefix=#{prefix}
+      --ssl
+      --use-new-tools
+      CC=#{ENV.cc}
+      CXX=#{ENV.cxx}
+      CCFLAGS=-I#{Formula["openssl"].opt_include}
+      LINKFLAGS=-L#{Formula["openssl"].opt_lib}
     ]
 
-    args << "--osx-version-min=#{MacOS.version}"
-    args << "CC=#{ENV.cc}"
-    args << "CXX=#{ENV.cxx}"
-
-    args << "--use-sasl-client" if build.with? "sasl"
-    args << "--use-system-boost" if build.with? "boost"
-    args << "--use-new-tools"
-    args << "--build-mongoreplay=true"
     args << "--disable-warnings-as-errors" if MacOS.version >= :yosemite
 
-    if build.with? "openssl"
-      args << "--ssl"
-
-      args << "CCFLAGS=-I#{Formula["openssl"].opt_include}"
-      args << "LINKFLAGS=-L#{Formula["openssl"].opt_lib}"
-    end
-
-    scons "install", *args
+    system "scons", "install", *args
 
     (buildpath/"mongod.conf").write mongodb_conf
     etc.install "mongod.conf"
@@ -100,7 +82,7 @@ class MongodbAT34 < Formula
   EOS
   end
 
-  plist_options :manual => "mongod --config #{HOMEBREW_PREFIX}/etc/mongod.conf"
+  plist_options :manual => "#{HOMEBREW_PREFIX}/opt/mongodb@3.4/bin/mongod --config #{HOMEBREW_PREFIX}/etc/mongod.conf"
 
   def plist; <<~EOS
     <?xml version="1.0" encoding="UTF-8"?>

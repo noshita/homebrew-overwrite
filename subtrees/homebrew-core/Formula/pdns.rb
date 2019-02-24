@@ -1,36 +1,30 @@
 class Pdns < Formula
   desc "Authoritative nameserver"
   homepage "https://www.powerdns.com"
-  url "https://downloads.powerdns.com/releases/pdns-4.1.3.tar.bz2"
-  sha256 "9aa5b37ded60bae99c0f3145e1562550869875346b882048e9aa04c25fc301ae"
+  url "https://downloads.powerdns.com/releases/pdns-4.1.4.tar.bz2"
+  sha256 "e9408603383d529b3bbee2509b73187d2186c502a9b052d07e250cd8f3873ed5"
 
   bottle do
-    sha256 "eb351d17afb02275426c016b1bb67896c2d40a455772b5d21cc3e8d3f78471eb" => :high_sierra
-    sha256 "2e13297e385b9777e37ef260f1da11e63c75b977afb4451211ea05daf4ce3127" => :sierra
-    sha256 "ee93325621eab781cc718b26aef2734516338cec8182f3ed06311f847a3e20fc" => :el_capitan
+    rebuild 1
+    sha256 "fcb6c47b7c0b57871044885ac05892ef86f5345b632455b4a97fd9149c6b67b6" => :mojave
+    sha256 "7fedb7d0e28c28b5b9dce56a2fa16d0a0a3b9f834a6e6ee677b34b927c555335" => :high_sierra
+    sha256 "f65bed6241a54a701a627f195761d99ccde3507e02c33c0b74db4801130a6b81" => :sierra
   end
 
   head do
     url "https://github.com/powerdns/pdns.git"
 
-    depends_on "automake" => :build
     depends_on "autoconf" => :build
+    depends_on "automake" => :build
     depends_on "libtool"  => :build
     depends_on "ragel"
   end
-
-  option "with-postgresql", "Enable the PostgreSQL backend"
-  option "with-remote", "enable the Remote backend"
-
-  deprecated_option "pgsql" => "with-postgresql"
-  deprecated_option "with-pgsql" => "with-postgresql"
 
   depends_on "pkg-config" => :build
   depends_on "boost"
   depends_on "lua"
   depends_on "openssl"
   depends_on "sqlite"
-  depends_on "postgresql" => :optional
 
   def install
     # Fix "configure: error: cannot find boost/program_options.hpp"
@@ -42,21 +36,11 @@ class Pdns < Formula
       --with-lua
       --with-openssl=#{Formula["openssl"].opt_prefix}
       --with-sqlite3
+      --with-modules=gsqlite3
     ]
-
-    # Include the PostgreSQL backend if requested
-    if build.with? "postgresql"
-      args << "--with-modules=gsqlite3 gpgsql"
-    elsif build.with? "remote"
-      args << "--with-modules=gsqlite3 remote"
-    else
-      # SQLite3 backend only is the default
-      args << "--with-modules=gsqlite3"
-    end
 
     system "./bootstrap" if build.head?
     system "./configure", *args
-
     system "make", "install"
   end
 

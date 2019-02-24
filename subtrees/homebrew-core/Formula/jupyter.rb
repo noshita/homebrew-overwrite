@@ -3,22 +3,20 @@ class Jupyter < Formula
   homepage "https://jupyter.org/"
   url "https://files.pythonhosted.org/packages/c9/a9/371d0b8fe37dd231cf4b2cff0a9f0f25e98f3a73c3771742444be27f2944/jupyter-1.0.0.tar.gz"
   sha256 "d9dc4b3318f310e34c82951ea5d6683f67bed7def4b259fafbfe4f1beb1d8e5f"
-  revision 4
+  revision 5
 
   bottle do
     cellar :any
-    sha256 "f9b0362485979fbda1f230374f55cf6264276d08864f353b0328f5f9e09e4279" => :high_sierra
-    sha256 "70ca07cae10fb5bcd51ed9496a6044108b9329b838c3aa72233e74cc6c85bbf0" => :sierra
-    sha256 "0447fa08e6fe58477688d34f11221ca9bcc9157b09ea98d7b613ae0d56a9c1fc" => :el_capitan
+    rebuild 2
+    sha256 "165cb6a71907dd5bd6751484446e43bef573aea2f7708b5f6fc76b3b5ab06b1e" => :mojave
+    sha256 "b2eac9cff21bf33732ea6d00c442763a81b6fbdda6bc641b62e862741a444fd1" => :high_sierra
+    sha256 "cf524856cb610f7c83f0f230bd06489d04c540d3d8e712a43aa573d2161c117e" => :sierra
   end
-
-  option "with-qtconsole", "Install with Qtconsole"
 
   depends_on "ipython"
   depends_on "pandoc"
   depends_on "python"
   depends_on "zeromq"
-  depends_on "pyqt" if build.with? "qtconsole"
 
   resource "appnope" do
     url "https://files.pythonhosted.org/packages/26/34/0f3a5efac31f27fabce64645f8c609de9d925fe2915304d1a40f544cff0e/appnope-0.1.0.tar.gz"
@@ -91,8 +89,8 @@ class Jupyter < Formula
   end
 
   resource "jedi" do
-    url "https://files.pythonhosted.org/packages/ff/c9/781449489b743c67ad063e33aa68139afaa8a1a5bc348eee9f5cab39b4e1/jedi-0.12.0.tar.gz"
-    sha256 "1972f694c6bc66a2fac8718299e2ab73011d653a6d8059790c3476d2353b99ad"
+    url "https://files.pythonhosted.org/packages/49/2f/cdfb8adc8cfc9fc2e5673e724d9b9098619dc1a2772cc6b8af34c6b7bef9/jedi-0.12.1.tar.gz"
+    sha256 "b409ed0f6913a701ed474a614a3bb46e6953639033e31f769ca7581da5bd1ec1"
   end
 
   resource "Jinja2" do
@@ -151,8 +149,8 @@ class Jupyter < Formula
   end
 
   resource "parso" do
-    url "https://files.pythonhosted.org/packages/fd/91/6b2d72e37c8f83d54354a46f05d6a8b07a491fe6b605ea78ccf83d9d39b9/parso-0.2.0.tar.gz"
-    sha256 "62bd6bf7f04ab5c817704ff513ef175328676471bdef3629d4bdd46626f75551"
+    url "https://files.pythonhosted.org/packages/29/c1/fd8a3e5eec85bf160c2b1ea369fdfa585620cf753db021d5db895801e701/parso-0.3.0.tar.gz"
+    sha256 "d250235e52e8f9fc5a80cc2a5f804c9fefd886b2e67a2b1099cf085f403f8e33"
   end
 
   resource "pathlib2" do
@@ -193,11 +191,6 @@ class Jupyter < Formula
   resource "pyzmq" do
     url "https://files.pythonhosted.org/packages/9f/f6/85a33a25128a4a812c3482547e3d458eebdb19ee0b4699f9199cdb2ad731/pyzmq-17.0.0.tar.gz"
     sha256 "0145ae59139b41f65e047a3a9ed11bbc36e37d5e96c64382fcdff911c4d8c3f0"
-  end
-
-  resource "qtconsole" do
-    url "https://files.pythonhosted.org/packages/68/48/ed0e8989b7376704ecb8faa782384de98cc108de522ad8d21f449484de9a/qtconsole-4.3.1.tar.gz"
-    sha256 "eff8c2faeda567a0bef5781f419a64e9977988db101652b312b9d74ec0a5109c"
   end
 
   resource "scandir" do
@@ -267,10 +260,8 @@ class Jupyter < Formula
 
     # gather packages to link based on options
     linked = %w[jupyter_core jupyter_client nbformat ipykernel jupyter_console
-                nbconvert notebook qtconsole]
+                nbconvert notebook]
     dependencies = resources.map(&:name).to_set - linked
-
-    linked.delete "qtconsole" if build.without? "qtconsole"
 
     # install dependent packages
     dependencies.each do |r|
@@ -323,12 +314,5 @@ class Jupyter < Formula
     EOS
     system bin/"jupyter-nbconvert", "nbconvert.ipynb"
     assert_predicate testpath/"nbconvert.html", :exist?, "Failed to export HTML"
-
-    if build.with? "qtconsole"
-      (testpath/"qtconsole.exp").write <<~EOS
-        spawn #{bin}/jupyter-qtconsole
-      EOS
-      system "expect", "-f", "qtconsole.exp"
-    end
   end
 end

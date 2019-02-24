@@ -1,15 +1,14 @@
 class Kallisto < Formula
   desc "Quantify abundances of transcripts from RNA-Seq data"
   homepage "https://pachterlab.github.io/kallisto/"
-  url "https://github.com/pachterlab/kallisto/archive/v0.44.0.tar.gz"
-  sha256 "35a81201a56f4557697e6fe693dc6b701bbbd0a7b2b6e1c6c845ef816d67ca29"
-  revision 1
+  url "https://github.com/pachterlab/kallisto/archive/v0.45.0.tar.gz"
+  sha256 "42cf3949065e286e0a184586e160a909d7660825dbbb25ca350cb1dd82aafa57"
 
   bottle do
     cellar :any
-    sha256 "ab38b73fea94b87a8bb4a177a0c8d521bf91d5cd5476cd5b0237f2ea007ebefd" => :high_sierra
-    sha256 "aae08244ae475a38fe28b7d33b1ce48880f48e3905451e813ba88c9bf69eda77" => :sierra
-    sha256 "de0c2d1d3ec0b36aae9a536e890dab249bba372f26d6e72dc70d39e5ea3d29e9" => :el_capitan
+    sha256 "b8cae9afc8e18cceb114b84ecd53f24e3b00b803589b125eda5f6307e364e0a8" => :mojave
+    sha256 "127c2e5aae118640a218e8141e441d649b900d4acf554cf3059e921c3dff262e" => :high_sierra
+    sha256 "f865065a6ce9703669d5af9447a681e5a248b23da4a974ff49a57ece7e6f159a" => :sierra
   end
 
   depends_on "autoconf" => :build

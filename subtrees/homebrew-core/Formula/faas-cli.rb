@@ -2,21 +2,21 @@ class FaasCli < Formula
   desc "CLI for templating and/or deploying FaaS functions"
   homepage "https://docs.get-faas.com/"
   url "https://github.com/openfaas/faas-cli.git",
-      :tag => "0.6.10",
-      :revision => "999a6669148c30adeb64400609953cf59db2fb64"
+      :tag      => "0.8.3",
+      :revision => "a141dedf94ffeed84412365fd591bdc8999c5a1b"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "d6b6801950ef0b953a20b159bdb425bdd5520c6f345ec35b4e9bdab8876c54b3" => :high_sierra
-    sha256 "7157f43dfec44e5150e07c75d32fdae174da426c9af3139f92cd947d70922eaa" => :sierra
-    sha256 "ab431d86269870fa330509a4a9735ec5f16c4972b2fdef55a42e256b486c92bf" => :el_capitan
+    sha256 "8319df9bec7d403a4896cd5a7d2fa06c4bd84e793adabfff0ee0639452a0eb7e" => :mojave
+    sha256 "dcb7e0a0de6eb4df22dc493aecd932af5da315d63d03abad256ced3864baaa40" => :high_sierra
+    sha256 "4a609304f87d1e850f311dcda145d1d749e1784edce1a9951e4ac2471ee26ed0" => :sierra
   end
 
   depends_on "go" => :build
 
   def install
     ENV["XC_OS"] = "darwin"
-    ENV["XC_ARCH"] = MacOS.prefer_64_bit? ? "amd64" : "386"
+    ENV["XC_ARCH"] = "amd64"
     ENV["GOPATH"] = buildpath
     (buildpath/"src/github.com/openfaas/faas-cli").install buildpath.children
     cd "src/github.com/openfaas/faas-cli" do
@@ -26,7 +26,6 @@ class FaasCli < Formula
              "-s -w -X #{project}/version.GitCommit=#{commit} -X #{project}/version.Version=#{version}", "-a",
              "-installsuffix", "cgo", "-o", bin/"faas-cli"
       bin.install_symlink "faas-cli" => "faas"
-      pkgshare.install "template"
       prefix.install_metafiles
     end
   end
@@ -71,13 +70,6 @@ class FaasCli < Formula
     EOS
 
     begin
-      cp_r pkgshare/"template", testpath
-
-      output = shell_output("#{bin}/faas-cli deploy -yaml test.yml")
-      assert_equal expected, output.chomp
-
-      rm_rf "template"
-
       output = shell_output("#{bin}/faas-cli deploy -yaml test.yml 2>&1", 1)
       assert_match "stat ./template/python/template.yml", output
 

@@ -1,23 +1,26 @@
 class Pypy3 < Formula
   desc "Implementation of Python 3 in Python"
   homepage "https://pypy.org/"
-  url "https://bitbucket.org/pypy/pypy/downloads/pypy3-v6.0.0-src.tar.bz2"
-  sha256 "ed8005202b46d6fc6831df1d13a4613bc40084bfa42f275068edadf8954034a3"
+  url "https://bitbucket.org/pypy/pypy/downloads/pypy3.6-v7.0.0-src.tar.bz2"
+  sha256 "7ccbf81db5c647fa0c27636c7d18d059d2570fff7eaffc03857c67bee84b8a26"
 
   bottle do
     cellar :any
-    sha256 "d9d5f2d2d7e60b346ed1ca01a80aa4dca94f47d2e22b51c413650723531434a7" => :high_sierra
-    sha256 "3587356d19f963dde3c1862faef0fa6d10fa716b733f0574f9b5530d61d734bc" => :sierra
-    sha256 "1650e0f3cfcc61793e853d1c738577a37259ea4351a8766f783afafefd0722e5" => :el_capitan
+    sha256 "d84192d75138a909a590edba538e5887325489bf1d882ece92618316cec06c9c" => :mojave
+    sha256 "572e61330699307ab49d425f9683e90e226325ddd3b2107857c1b92026c9307e" => :high_sierra
+    sha256 "59dbf2859908c30f12904b68caadf5d6b48093d4f51043d8a91d7c15fec28995" => :sierra
   end
 
-  depends_on :arch => :x86_64
   depends_on "pkg-config" => :build
   depends_on "pypy" => :build
-  depends_on "gdbm" => :recommended
-  depends_on "sqlite" => :recommended
+  depends_on :arch => :x86_64
+  depends_on "gdbm"
+  # pypy does not find system libffi, and its location cannot be given
+  # as a build option
+  depends_on "libffi" if DevelopmentTools.clang_build_version >= 1000
   depends_on "openssl"
-  depends_on "xz" => :recommended
+  depends_on "sqlite"
+  depends_on "xz"
 
   # packaging depends on pyparsing
   resource "pyparsing" do
@@ -53,12 +56,11 @@ class Pypy3 < Formula
     sha256 "f2bd08e0cd1b06e10218feaf6fef299f473ba706582eb3bd9d52203fdbd7ee68"
   end
 
-  # https://bugs.launchpad.net/ubuntu/+source/gcc-4.2/+bug/187391
-  fails_with :gcc
-
   def install
+    ENV.append "CFLAGS", "-I#{MacOS.sdk_path}/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"
+
     # Work around "dyld: Symbol not found: _utimensat"
-    if MacOS.version == :sierra && MacOS::Xcode.installed? && MacOS::Xcode.version >= "9.0"
+    if MacOS.version == :sierra && MacOS::Xcode.version >= "9.0"
       ENV.delete("SDKROOT")
     end
 
@@ -89,11 +91,8 @@ class Pypy3 < Formula
 
     libexec.mkpath
     cd "pypy/tool/release" do
-      package_args = %w[--archive-name pypy3 --targetdir .]
-      package_args << "--without-gdbm" if build.without? "gdbm"
-      package_args << "--without-lzma" if build.without? "xz"
-      system python, "package.py", *package_args
-      system "tar", "-C", libexec.to_s, "--strip-components", "1", "-xzf", "pypy3.tar.bz2"
+      system python, "package.py", "--archive-name", "pypy3", "--targetdir", "."
+      system "tar", "-C", libexec.to_s, "--strip-components", "1", "-xf", "pypy3.tar.bz2"
     end
 
     (libexec/"lib").install libexec/"bin/libpypy3-c.dylib" => "libpypy3-c.dylib"

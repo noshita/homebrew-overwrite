@@ -1,18 +1,17 @@
 class Gdbm < Formula
   desc "GNU database manager"
   homepage "https://www.gnu.org/software/gdbm/"
-  url "https://ftp.gnu.org/gnu/gdbm/gdbm-1.15.tar.gz"
-  mirror "https://ftpmirror.gnu.org/gdbm/gdbm-1.15.tar.gz"
-  sha256 "f9fde3207f67ed8a5a5ddd8ad5e7acf7b27c2cf0f20dfbdde876dcd6e3d2dc0e"
+  url "https://ftp.gnu.org/gnu/gdbm/gdbm-1.18.1.tar.gz"
+  mirror "https://ftpmirror.gnu.org/gdbm/gdbm-1.18.1.tar.gz"
+  sha256 "86e613527e5dba544e73208f42b78b7c022d4fa5a6d5498bf18c8d6f745b91dc"
 
   bottle do
     cellar :any
-    sha256 "04899aebecf79de7b1a1fd56ea2c57443bb8a3b4741e006c38c233554ccb0672" => :high_sierra
-    sha256 "aeb282fe2d4fbee1f056b7da013db3355ee8644979bcb55cbdd97f8bc21fe240" => :sierra
-    sha256 "826e5048722eb9ba535b8b3da24b0cb93fe7a3a47a19b1f034c40ffbb85304b8" => :el_capitan
+    rebuild 1
+    sha256 "2168d58856917ca996d12dedaa930643529c66046103fe55018afc51f2bc1fcb" => :mojave
+    sha256 "ac688d571f9c00e09670440d67d2869a34dab0fb897ba0b183ed84fceffdbc9c" => :high_sierra
+    sha256 "89d6db4fbffbe2184b4531faaebf0432a4b01e1ed92678ce6bd2f95c69dc9803" => :sierra
   end
-
-  option "with-libgdbm-compat", "Build libgdbm_compat, a compatibility layer which provides UNIX-like dbm and ndbm interfaces."
 
   # Use --without-readline because readline detection is broken in 1.13
   # https://github.com/Homebrew/homebrew-core/pull/10903
@@ -23,8 +22,6 @@ class Gdbm < Formula
       --without-readline
       --prefix=#{prefix}
     ]
-
-    args << "--enable-libgdbm-compat" if build.with? "libgdbm-compat"
 
     system "./configure", *args
     system "make", "install"

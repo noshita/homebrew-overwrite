@@ -1,13 +1,14 @@
 class Dynare < Formula
   desc "Platform for economic models, particularly DSGE and OLG models"
   homepage "https://www.dynare.org/"
-  url "https://www.dynare.org/release/source/dynare-4.5.5.tar.xz"
-  sha256 "9e2f604aa7a722cbcc6a4150af0b7fb78874490cf0b4868b2a410193ae1e3727"
+  url "https://www.dynare.org/release/source/dynare-4.5.6.tar.xz"
+  sha256 "a4ff0ee5892a044d169ead2778e96fefcf617535fab28d25b977d8d008c7fe87"
+  revision 3
 
   bottle do
-    sha256 "83f0aca2e6ff7f72846812edb2c4ad5e552559fed44c10eac8c9622b4c1b804e" => :high_sierra
-    sha256 "e832809708568afd020dccc388dbe5084942259065861b49d6b23006803f94df" => :sierra
-    sha256 "961d03b7753177b09d891319986ae57bf032ec8300f05c60f856871bb4ae67d0" => :el_capitan
+    sha256 "06897825b3293494bde1e12d782a3f7e9d5070e0610b336df308e0748495132a" => :mojave
+    sha256 "2380cf6228e06a151e5f22d3db9e298a1e2c6ba6ee059708dd7ec19742e54b73" => :high_sierra
+    sha256 "59bb86c547dd4720fd7cafa1770b123038f797a9873ad55ced7dfcd2c42db233" => :sierra
   end
 
   head do
@@ -30,8 +31,6 @@ class Dynare < Formula
   depends_on "octave"
   depends_on "suite-sparse"
   depends_on "veclibfort"
-
-  needs :cxx11
 
   resource "slicot" do
     url "https://mirrors.ocf.berkeley.edu/debian/pool/main/s/slicot/slicot_5.0+20101122.orig.tar.gz"

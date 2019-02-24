@@ -1,24 +1,26 @@
 class Pass < Formula
   desc "Password manager"
   homepage "https://www.passwordstore.org/"
-  url "https://git.zx2c4.com/password-store/snapshot/password-store-1.7.2.tar.xz"
-  sha256 "4768c5e1965c4d2aeb28818681e484fb105b6f46cbd75a97608615c4ec6980ea"
+  url "https://git.zx2c4.com/password-store/snapshot/password-store-1.7.3.tar.xz"
+  sha256 "2b6c65846ebace9a15a118503dcd31b6440949a30d3b5291dfb5b1615b99a3f4"
   head "https://git.zx2c4.com/password-store", :using => :git
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "268b81c3a5a7c7dd6ee63ed1b466e6e7b5bb6f26f21c7ac8b7a9bc860a2b2bd8" => :high_sierra
-    sha256 "268b81c3a5a7c7dd6ee63ed1b466e6e7b5bb6f26f21c7ac8b7a9bc860a2b2bd8" => :sierra
-    sha256 "268b81c3a5a7c7dd6ee63ed1b466e6e7b5bb6f26f21c7ac8b7a9bc860a2b2bd8" => :el_capitan
+    rebuild 1
+    sha256 "1a70cc714c9d37c24898d7da1431b5e5af1926abd41915cb546d6979ded1a4cb" => :mojave
+    sha256 "c08575225a6e5aeace358c9c65666e08743814fd66017238e32b8fc3dff812aa" => :high_sierra
+    sha256 "c08575225a6e5aeace358c9c65666e08743814fd66017238e32b8fc3dff812aa" => :sierra
   end
 
-  depends_on "qrencode"
-  depends_on "tree"
   depends_on "gnu-getopt"
   depends_on "gnupg"
+  depends_on "qrencode"
+  depends_on "tree"
 
   def install
     system "make", "PREFIX=#{prefix}", "WITH_ALLCOMP=yes", "BASHCOMPDIR=#{bash_completion}", "ZSHCOMPDIR=#{zsh_completion}", "FISHCOMPDIR=#{fish_completion}", "install"
+    inreplace "#{bin}/pass", /^SYSTEM_EXTENSION_DIR=.*$/, "SYSTEM_EXTENSION_DIR=\"#{HOMEBREW_PREFIX}/lib/password-store/extensions\""
     elisp.install "contrib/emacs/password-store.el"
     pkgshare.install "contrib"
   end

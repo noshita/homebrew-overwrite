@@ -1,24 +1,22 @@
 class BoostPython3 < Formula
   desc "C++ library for C++/Python3 interoperability"
   homepage "https://www.boost.org/"
-  url "https://dl.bintray.com/boostorg/release/1.67.0/source/boost_1_67_0.tar.bz2"
-  sha256 "2684c972994ee57fc5632e03bf044746f6eb45d4920c343937a465fd67a5adba"
+  url "https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.bz2"
+  sha256 "7f6130bc3cf65f56a618888ce9d5ea704fa10b462be126ad053e80e553d6d8b7"
   head "https://github.com/boostorg/boost.git"
 
   bottle do
-    sha256 "9e6f8d24dea9f09ce5e9a4a13b5af850c60053c459787377449e0f9733cdb274" => :high_sierra
-    sha256 "5491c58d54ad60d3242d64b620c92b988b0801e1d1945006d823d6559186bb3a" => :sierra
-    sha256 "76c42589ff0991ab5e7a335e567adedb84c1f4a9d22c86b1e52f95c922e5649b" => :el_capitan
+    sha256 "df9783e900573cefa4eb6f454e2c96af5ba25faf0840c01c0f137b82575c580b" => :mojave
+    sha256 "0783713245f6341b55dd0e4bafb2a4783972ed05e4bbd03db0d821c10903aef3" => :high_sierra
+    sha256 "064d14b4acde429e7d8713236ebb60f72ae1419cbd84401c7428999118d5d3b5" => :sierra
   end
 
   depends_on "boost"
   depends_on "python"
 
-  needs :cxx11
-
   resource "numpy" do
-    url "https://files.pythonhosted.org/packages/ee/66/7c2690141c520db08b6a6f852fa768f421b0b50683b7bbcd88ef51f33170/numpy-1.14.0.zip"
-    sha256 "3de643935b212307b420248018323a44ec51987a336d1d747c1322afc3c099fb"
+    url "https://files.pythonhosted.org/packages/d5/6e/f00492653d0fdf6497a181a1c1d46bbea5a2383e7faf4c8ca6d6f3d2581d/numpy-1.14.5.zip"
+    sha256 "a4a433b3a264dbc9aa9c7c241e87c0358a503ea6394f8737df1683c7c9a102ac"
   end
 
   def install
@@ -88,8 +86,9 @@ class BoostPython3 < Formula
 
     pyincludes = Utils.popen_read("python3-config --includes").chomp.split(" ")
     pylib = Utils.popen_read("python3-config --ldflags").chomp.split(" ")
+    pyver = Language::Python.major_minor_version("python3").to_s.delete(".")
 
-    system ENV.cxx, "-shared", "hello.cpp", "-L#{lib}", "-lboost_python36", "-o",
+    system ENV.cxx, "-shared", "hello.cpp", "-L#{lib}", "-lboost_python#{pyver}", "-o",
            "hello.so", *pyincludes, *pylib
 
     output = <<~EOS

@@ -1,18 +1,19 @@
 class GlibNetworking < Formula
   desc "Network related modules for glib"
   homepage "https://launchpad.net/glib-networking"
-  url "https://download.gnome.org/sources/glib-networking/2.56/glib-networking-2.56.1.tar.xz"
-  sha256 "df47b0e0a037d2dcf6b1846cbdf68dd4b3cc055e026bb40c4a55f19f29f635c8"
+  url "https://download.gnome.org/sources/glib-networking/2.58/glib-networking-2.58.0.tar.xz"
+  sha256 "bdfa0255e031b8ee003cc283002536b77ee76450105f1dc6ab066b9bf4330068"
 
   bottle do
-    sha256 "da2db63fe14a07847b4e39456e71b694e40b5d13280c9cdea09d865bbf5966e0" => :high_sierra
-    sha256 "cb898d2ae8576f8d5ced34d65567bf2c1cfa0fedb8fddb7d43c7213c538e613d" => :sierra
-    sha256 "f44e60d7daeb84cd055d359b7e2b54cc10cf64e35fd808cb4a3ba71cbd85be08" => :el_capitan
+    sha256 "755fef493a32ac77d0c51b37f58059471fba1e9e709a42d22952a937c412c9c6" => :mojave
+    sha256 "434a7245581b3741d79b41f55fb4b1c7f0aea729e04b8e1ea838505025b6fc5d" => :high_sierra
+    sha256 "9db7d767f3a3b9f2f758e3076c77b59bd8905fccc2a97e21b085838e2ad7bafd" => :sierra
+    sha256 "c64f800a0043acaaa04693b684874547ce607d5b1babef1b054b9e27fa24465d" => :el_capitan
   end
 
   depends_on "meson" => :build
-  depends_on "pkg-config" => :build
   depends_on "ninja" => :build
+  depends_on "pkg-config" => :build
   depends_on "python" => :build
   depends_on "glib"
   depends_on "gnutls"
@@ -21,29 +22,15 @@ class GlibNetworking < Formula
   link_overwrite "lib/gio/modules"
 
   def install
-    # Install files to `lib` instead of `HOMEBREW_PREFIX/lib`.
-    inreplace "meson.build", "gio_dep.get_pkgconfig_variable('giomoduledir',", "'#{lib}/gio/modules'"
-    inreplace "meson.build", "define_variable: ['libdir', libdir])", ""
-
     # stop meson_post_install.py from doing what needs to be done in the post_install step
-    ENV["DESTDIR"] = ""
+    ENV["DESTDIR"] = "/"
+
     mkdir "build" do
       system "meson", "--prefix=#{prefix}",
-                      # Remove when p11-kit >= 0.20.7 builds on OSX
-                      # see https://github.com/Homebrew/homebrew/issues/36323
-                      # and https://bugs.freedesktop.org/show_bug.cgi?id=91602
-                      "-Dpkcs11_support=false",
                       "-Dlibproxy_support=false",
-                      "-Dca_certificates_path=#{etc}/openssl/cert.pem",
                       ".."
-      system "ninja"
-      system "ninja", "install"
-    end
-
-    # rename .dylib to .so, which is what glib expects
-    # see https://github.com/mesonbuild/meson/issues/3053
-    Dir.glob(lib/"gio/modules/*.dylib").each do |f|
-      mv f, "#{File.dirname(f)}/#{File.basename(f, ".dylib")}.so"
+      system "ninja", "-v"
+      system "ninja", "install", "-v"
     end
   end
 

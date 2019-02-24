@@ -3,12 +3,12 @@ class Shogun < Formula
   homepage "http://www.shogun-toolbox.org/"
   url "http://shogun-toolbox.org/archives/shogun/releases/6.1/sources/shogun-6.1.3.tar.bz2"
   sha256 "57169dc8c05b216771c567b2ee2988f14488dd13f7d191ebc9d0703bead4c9e6"
-  revision 2
+  revision 3
 
   bottle do
-    sha256 "5cba717ac215389123c61b18d67fa4b4b3fa22ecda0db6ce8b02d6e7520b3318" => :high_sierra
-    sha256 "f00f871d3811235b18e8b3f1b9ff79ffa2c7d511f777c242ff6da11c3ba17d31" => :sierra
-    sha256 "83732a82aefc44d78643400747406d44cf53ab0aca8137bb152ce287d1842e81" => :el_capitan
+    sha256 "7f46d34b9fb84e45da8010cd796d28860a16dfa8ec3b4e3bae234cf5c9f3db4e" => :mojave
+    sha256 "e432dbe32889e4dc9bc2501a61934fe6f1ed5c13b613d79cb22c34a1d8543e99" => :high_sierra
+    sha256 "f9c0b2fdec633139f4187c3acf571a9e56ef627d417ff385583bc1c214d64647" => :sierra
   end
 
   depends_on "cmake" => :build
@@ -28,6 +28,16 @@ class Shogun < Formula
   depends_on "xz"
 
   cxxstdlib_check :skip
+
+  resource "jblas" do
+    url "https://mikiobraun.github.io/jblas/jars/jblas-1.2.3.jar"
+    sha256 "e9328d4e96db6b839abf50d72f63626b2309f207f35d0858724a6635742b8398"
+  end
+
+  resource "numpy" do
+    url "https://files.pythonhosted.org/packages/ee/66/7c2690141c520db08b6a6f852fa768f421b0b50683b7bbcd88ef51f33170/numpy-1.14.0.zip"
+    sha256 "3de643935b212307b420248018323a44ec51987a336d1d747c1322afc3c099fb"
+  end
 
   # Fixes the linking of the python interface.
   # Upstream commit from 8 Jan 2018 https://github.com/shogun-toolbox/shogun/commit/ff8840ce0e
@@ -49,20 +59,8 @@ class Shogun < Formula
   # deprecated json-c is_error() macro which got removed in json-c 0.13.1.
   patch do
     url "https://github.com/shogun-toolbox/shogun/commit/365ce4c4c7.patch?full_index=1"
-    sha256 "e7d90ed1ff448d86762449223b926de247e49ae6eeffa7f38c2395f69b1e16fc"
+    sha256 "0a1c3e2e16b2ce70855c1f15876bddd5e5de35ab29290afceacdf7179c4558cb"
   end
-
-  resource "jblas" do
-    url "https://mikiobraun.github.io/jblas/jars/jblas-1.2.3.jar"
-    sha256 "e9328d4e96db6b839abf50d72f63626b2309f207f35d0858724a6635742b8398"
-  end
-
-  resource "numpy" do
-    url "https://files.pythonhosted.org/packages/ee/66/7c2690141c520db08b6a6f852fa768f421b0b50683b7bbcd88ef51f33170/numpy-1.14.0.zip"
-    sha256 "3de643935b212307b420248018323a44ec51987a336d1d747c1322afc3c099fb"
-  end
-
-  needs :cxx11
 
   def install
     ENV.cxx11

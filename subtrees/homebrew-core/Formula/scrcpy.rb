@@ -1,26 +1,24 @@
 class Scrcpy < Formula
   desc "Display and control your Android device"
   homepage "https://github.com/Genymobile/scrcpy"
-  url "https://github.com/Genymobile/scrcpy/archive/v1.2.tar.gz"
-  sha256 "d340e3a0aa1625161bc00068ffccbe291b7866729a5fff7ff859904480ec0df3"
-  revision 1
+  url "https://github.com/Genymobile/scrcpy/archive/v1.7.tar.gz"
+  sha256 "d447b51097929854e5ac1cf96410450def6a0e3637e544caead7a5b9ada811be"
 
   bottle do
-    sha256 "99a059d8d8aed9011eeb165d9c0059e637b50f4c3cdc790588ea5e3a96a71364" => :high_sierra
-    sha256 "71b6af428d8d0f8552140bca1076c280c37219a9afe46d6d409c44ca75821f6e" => :sierra
-    sha256 "d5e15c85b00a97eac0de8e6883e2256cad64dc2c182c1499cb55fe82bc9cbb5a" => :el_capitan
+    sha256 "0ce2707d67b9ba2cf1831c6fdcfb8e916391c3e714612c44d07029824f7dda6a" => :mojave
+    sha256 "41510c9733699da78978c840c7d57f476293c5ececed0de196f90338b90f4a43" => :high_sierra
+    sha256 "6a18b8356a86ebe30f7bbb40bcd567a186a175d3120f8422ab6fb18d8afbd8e8" => :sierra
   end
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
   depends_on "pkg-config" => :build
-
   depends_on "ffmpeg"
   depends_on "sdl2"
 
   resource "prebuilt-server" do
-    url "https://github.com/Genymobile/scrcpy/releases/download/v1.2/scrcpy-server-v1.2.jar"
-    sha256 "cb39654ed2fda3d30ddff292806950ccc5c394375ea12b974f790c7f38f61f60"
+    url "https://github.com/Genymobile/scrcpy/releases/download/v1.7/scrcpy-server-v1.7.jar"
+    sha256 "ee86ec8424f7dc50cacdf927312bdb46e0aa0d68611da584dc4b16d8057bc25e"
   end
 
   def install
@@ -31,7 +29,7 @@ class Scrcpy < Formula
     mkdir "build" do
       system "meson", "--prefix=#{prefix}",
                       "--buildtype=release",
-                      "-Dprebuilt_server=#{buildpath/"prebuilt-server.jar"}",
+                      "-Dprebuilt_server=#{buildpath}/prebuilt-server.jar",
                       ".."
 
       system "ninja", "install"

@@ -1,22 +1,21 @@
 class Uhd < Formula
   desc "Hardware driver for all USRP devices"
   homepage "https://files.ettus.com/manual/"
-  url "https://github.com/EttusResearch/uhd/archive/v3.12.0.0.tar.gz"
-  sha256 "a4ae40c2e3e6c51941fc59eab2c8131fd03fa837459e287b340c88cf2c9848ed"
+  url "https://github.com/EttusResearch/uhd/archive/v3.13.1.0.tar.gz"
+  sha256 "16fb265b9611ff51ea229058824661c04db935cf88fde17af9cb66a8b9299bd5"
   head "https://github.com/EttusResearch/uhd.git"
 
   bottle do
-    sha256 "aebb2cb75a6b9de9d080276184bd1235423b9f7e7d0462cbc5d5baf8173e094c" => :high_sierra
-    sha256 "70b3f5d16a9402b58228ee7e63eba9e376ccc8add1ae96cad1525c3072eb6478" => :sierra
-    sha256 "f16d9a945cdd6b5797861ae7bc3cae4b819b457b9c32abcf21450b061a1fca04" => :el_capitan
+    sha256 "cdbb577e04715cc175c83397dbb03964870935a97fd4579e1f2a6f9b45a76a0c" => :mojave
+    sha256 "71f5cd72db8ecce7c9d7220cf63b92612f43df12dccc4a33d49778cffd295252" => :high_sierra
+    sha256 "4503cccbb9709d64efcbc3674c4ae3e777979d56a74d32057c477a569b8271ba" => :sierra
   end
 
   depends_on "cmake" => :build
+  depends_on "doxygen" => :build
   depends_on "boost"
   depends_on "libusb"
-  depends_on "python@2"
-  depends_on "doxygen" => [:build, :optional]
-  depends_on "gpsd" => :optional
+  depends_on "python"
 
   resource "Mako" do
     url "https://files.pythonhosted.org/packages/eb/f3/67579bb486517c0d49547f9697e36582cd19dafb5df9e687ed8e22de57fa/Mako-1.0.7.tar.gz"
@@ -24,14 +23,15 @@ class Uhd < Formula
   end
 
   def install
-    ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python2.7/site-packages"
+    xy = Language::Python.major_minor_version "python3"
+    ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python#{xy}/site-packages"
 
     resource("Mako").stage do
-      system "python", *Language::Python.setup_install_args(libexec/"vendor")
+      system "python3", *Language::Python.setup_install_args(libexec/"vendor")
     end
 
     mkdir "host/build" do
-      system "cmake", "..", *std_cmake_args
+      system "cmake", "..", *std_cmake_args, "-DENABLE_PYTHON3=ON"
       system "make"
       system "make", "test"
       system "make", "install"

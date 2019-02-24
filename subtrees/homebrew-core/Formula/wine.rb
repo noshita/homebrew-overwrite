@@ -7,70 +7,44 @@
 class Wine < Formula
   desc "Run Windows applications without a copy of Microsoft Windows"
   homepage "https://www.winehq.org/"
-
-  stable do
-    url "https://dl.winehq.org/wine/source/3.0/wine-3.0.1.tar.xz"
-    mirror "https://downloads.sourceforge.net/project/wine/Source/wine-3.0.1.tar.xz"
-    sha256 "bad00d7ddac6652795a2ed52ce02a544ff4e891499b29ac71d28d20b8e1d26f3"
-
-    # Patch to fix screen-flickering issues. Still relevant on 3.0.
-    # https://bugs.winehq.org/show_bug.cgi?id=34166
-    patch do
-      url "https://raw.githubusercontent.com/Homebrew/formula-patches/74c2566/wine/2.14.patch"
-      sha256 "6907471d18996ada60cc0cbc8462a1698e90720c0882846dfbfb163e5d3899b8"
-    end
-
-    resource "mono" do
-      url "https://dl.winehq.org/wine/wine-mono/4.7.1/wine-mono-4.7.1.msi", :using => :nounzip
-      sha256 "2c8d5db7f833c3413b2519991f5af1f433d59a927564ec6f38a3f1f8b2c629aa"
-    end
-  end
+  url "https://dl.winehq.org/wine/source/4.0/wine-4.0.tar.xz"
+  mirror "https://downloads.sourceforge.net/project/wine/Source/wine-4.0.tar.xz"
+  sha256 "6736cdee95b2b8bb021ec0c19497ed8cad5ae2c8bfdb7ab5dc687ff92a480d4d"
+  head "https://source.winehq.org/git/wine.git"
 
   bottle do
-    sha256 "f0c697164404375380aeceb8da50a20c016d478b96d699e728d25a2d62708cf8" => :high_sierra
-    sha256 "d7ed7514a75d6bcd95d8e071225be110fde1e4d993a031a5a911394903746739" => :sierra
-    sha256 "8bc2edc35598406cc8248c83f46924934b83f314e2c8c70b0e7f3907f514d359" => :el_capitan
+    sha256 "9b07da64cee04feb770f3b0d924b1b6a9c99bde9d271e05d76c9e4fee9649ee3" => :sierra
   end
 
-  devel do
-    url "https://dl.winehq.org/wine/source/3.x/wine-3.10.tar.xz"
-    mirror "https://downloads.sourceforge.net/project/wine/Source/wine-3.10.tar.xz"
-    sha256 "d7505cc79c7cd8950f1a46ecfcc0ae2ecc71717ce85414846264395b1e7ac6b5"
-
-    resource "mono" do
-      url "https://dl.winehq.org/wine/wine-mono/4.7.1/wine-mono-4.7.1.msi", :using => :nounzip
-      sha256 "2c8d5db7f833c3413b2519991f5af1f433d59a927564ec6f38a3f1f8b2c629aa"
-    end
-  end
-
-  head do
-    url "https://source.winehq.org/git/wine.git"
-
-    resource "mono" do
-      url "https://dl.winehq.org/wine/wine-mono/4.7.1/wine-mono-4.7.1.msi", :using => :nounzip
-      sha256 "2c8d5db7f833c3413b2519991f5af1f433d59a927564ec6f38a3f1f8b2c629aa"
-    end
-  end
-
-  depends_on :macos => :el_capitan
-  depends_on "pkg-config" => :build
   depends_on "cmake" => :build
   depends_on "makedepend" => :build
 
+  # High Sierra doesn't support 32-bit builds, and thus wine fails to compile.
+  # This will only be safe to remove when upstream support 64-bit builds.
+  depends_on :maximum_macos => [:sierra, :build]
+
+  depends_on "pkg-config" => :build
+  depends_on :macos => :el_capitan
+
+  resource "mono" do
+    url "https://dl.winehq.org/wine/wine-mono/4.7.5/wine-mono-4.7.5.msi"
+    sha256 "154d68d476cdedef56f159d837fbb5eef9358a9f85de89f86c189ec4da004b3f"
+  end
+
   resource "gecko-x86" do
-    url "https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86.msi", :using => :nounzip
+    url "https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86.msi"
     sha256 "3b8a361f5d63952d21caafd74e849a774994822fb96c5922b01d554f1677643a"
   end
 
   resource "gecko-x86_64" do
-    url "https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86_64.msi", :using => :nounzip
+    url "https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86_64.msi"
     sha256 "c565ea25e50ea953937d4ab01299e4306da4a556946327d253ea9b28357e4a7d"
   end
 
   resource "openssl" do
-    url "https://www.openssl.org/source/openssl-1.0.2o.tar.gz"
-    mirror "https://dl.bintray.com/homebrew/mirror/openssl-1.0.2o.tar.gz"
-    sha256 "ec3f5c9714ba0fd45cb4e087301eb1336c317e0d20b575a125050470e8089e4d"
+    url "https://www.openssl.org/source/openssl-1.0.2q.tar.gz"
+    mirror "https://dl.bintray.com/homebrew/mirror/openssl--1.0.2p.tar.gz"
+    sha256 "5744cfcbcec2b1b48629f7354203bc1e5e9b5466998bbccc5b5fcde3b18eb684"
   end
 
   resource "libtool" do
@@ -80,27 +54,27 @@ class Wine < Formula
   end
 
   resource "jpeg" do
-    url "http://www.ijg.org/files/jpegsrc.v9c.tar.gz"
+    url "https://www.ijg.org/files/jpegsrc.v9c.tar.gz"
     mirror "https://fossies.org/linux/misc/jpegsrc.v9c.tar.gz"
     sha256 "650250979303a649e21f87b5ccd02672af1ea6954b911342ea491f351ceb7122"
   end
 
   resource "libtiff" do
-    url "https://download.osgeo.org/libtiff/tiff-4.0.9.tar.gz"
-    mirror "https://fossies.org/linux/misc/tiff-4.0.9.tar.gz"
-    sha256 "6e7bdeec2c310734e734d19aae3a71ebe37a4d842e0e23dbb1b8921c0026cfcd"
+    url "https://download.osgeo.org/libtiff/tiff-4.0.10.tar.gz"
+    mirror "https://fossies.org/linux/misc/tiff-4.0.10.tar.gz"
+    sha256 "2c52d11ccaf767457db0c46795d9c7d1a8d8f76f68b0b800a3dfe45786b996e4"
   end
 
   resource "little-cms2" do
     url "https://downloads.sourceforge.net/project/lcms/lcms/2.9/lcms2-2.9.tar.gz"
-    mirror "https://mirrors.kernel.org/debian/pool/main/l/lcms2/lcms2_2.9.orig.tar.gz"
+    mirror "https://deb.debian.org/debian/pool/main/l/lcms2/lcms2_2.9.orig.tar.gz"
     sha256 "48c6fdf98396fa245ed86e622028caf49b96fa22f3e5734f853f806fbc8e7d20"
   end
 
   resource "libpng" do
-    url "https://downloads.sourceforge.net/libpng/libpng-1.6.34.tar.xz"
-    mirror "https://sourceforge.mirrorservice.org/l/li/libpng/libpng16/1.6.34/libpng-1.6.34.tar.xz"
-    sha256 "2f1e960d92ce3b3abd03d06dfec9637dfbd22febf107a536b44f7a47c60659f6"
+    url "https://downloads.sourceforge.net/libpng/libpng-1.6.36.tar.xz"
+    mirror "https://sourceforge.mirrorservice.org/l/li/libpng/libpng16/1.6.36/libpng-1.6.36.tar.xz"
+    sha256 "eceb924c1fa6b79172fdfd008d335f0e59172a86a66481e09d4089df872aa319"
   end
 
   resource "freetype" do
@@ -116,14 +90,14 @@ class Wine < Formula
   end
 
   resource "webp" do
-    url "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.0.0.tar.gz"
-    sha256 "84259c4388f18637af3c5a6361536d754a5394492f91be1abc2e981d4983225b"
+    url "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.0.2.tar.gz"
+    sha256 "3d47b48c40ed6476e8047b2ddb81d93835e0ca1b8d3e8c679afbb3004dd564b1"
   end
 
   resource "fontconfig" do
-    url "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.13.0.tar.bz2"
-    mirror "https://ftp.osuosl.org/pub/blfs/conglomeration/fontconfig/fontconfig-2.13.0.tar.bz2"
-    sha256 "91dde8492155b7f34bb95079e79be92f1df353fcc682c19be90762fd3e12eeb9"
+    url "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.13.1.tar.bz2"
+    mirror "https://ftp.osuosl.org/pub/blfs/conglomeration/fontconfig/fontconfig-2.13.1.tar.bz2"
+    sha256 "f655dd2a986d7aa97e052261b36aa67b0a64989496361eca8d604e6414006741"
   end
 
   resource "gd" do
@@ -133,18 +107,17 @@ class Wine < Formula
   end
 
   resource "libgphoto2" do
-    url "https://downloads.sourceforge.net/project/gphoto/libgphoto/2.5.18/libgphoto2-2.5.18.tar.bz2"
-    mirror "https://fossies.org/linux/privat/libgphoto2-2.5.18.tar.bz2"
-    sha256 "5b17b89d7ca0ec35c72c94ac3701e87d49e52371f9509b8e5c08c913ae57a7ec"
+    url "https://downloads.sourceforge.net/project/gphoto/libgphoto/2.5.20/libgphoto2-2.5.20.tar.bz2"
+    sha256 "e10ff0140e2e5dddaf6c6d9d933ab6f8c0bc66fdf7445b1ef2ca9f4d96e68b0f"
   end
 
   resource "net-snmp" do
-    url "https://downloads.sourceforge.net/project/net-snmp/net-snmp/5.7.3/net-snmp-5.7.3.tar.gz"
-    sha256 "12ef89613c7707dc96d13335f153c1921efc9d61d3708ef09f3fc4a7014fb4f0"
+    url "https://downloads.sourceforge.net/project/net-snmp/net-snmp/5.8/net-snmp-5.8.tar.gz"
+    sha256 "b2fc3500840ebe532734c4786b0da4ef0a5f67e51ef4c86b3345d697e4976adf"
   end
 
   resource "sane-backends" do
-    url "https://mirrors.kernel.org/debian/pool/main/s/sane-backends/sane-backends_1.0.27.orig.tar.gz"
+    url "https://deb.debian.org/debian/pool/main/s/sane-backends/sane-backends_1.0.27.orig.tar.gz"
     mirror "https://fossies.org/linux/misc/sane-backends-1.0.27.tar.gz"
     sha256 "293747bf37275c424ebb2c833f8588601a60b2f9653945d5a3194875355e36c9"
   end
@@ -155,15 +128,10 @@ class Wine < Formula
     sha256 "6c1337aee2e4bf993299851c70b7db11faec785303cfca3a5c3eb5f329ba7023"
   end
 
-  fails_with :clang do
-    build 425
-    cause "Clang prior to Xcode 5 miscompiles some parts of wine"
-  end
-
   def openssl_arch_args
     {
       :x86_64 => %w[darwin64-x86_64-cc enable-ec_nistp_64_gcc_128],
-      :i386 => %w[darwin-i386-cc],
+      :i386   => %w[darwin-i386-cc],
     }
   end
 
@@ -188,6 +156,16 @@ class Wine < Formula
   end
 
   def install
+    # 32-bit support has been removed by Apple.
+    if DevelopmentTools.clang_build_version >= 1000
+      odie <<~EOS
+        Wine cannot currently be installed from source on
+        macOS #{MacOS.version}.
+        You may wish to try:
+          brew install wine --force-bottle
+      EOS
+    end
+
     ENV.prepend_create_path "PATH", "#{libexec}/bin"
     ENV.prepend_create_path "PKG_CONFIG_PATH", "#{libexec}/lib/pkgconfig"
 
@@ -212,6 +190,7 @@ class Wine < Formula
           system "make", "clean"
           system "perl", "./Configure", "--prefix=#{libexec}",
                                         "no-ssl2",
+                                        "no-ssl3",
                                         "no-zlib",
                                         "shared",
                                         "enable-cms",
@@ -334,23 +313,15 @@ class Wine < Formula
       end
 
       resource("fontconfig").stage do
-        # Remove for fontconfig > 2.13.0
-        # Upstream issue from 6 Mar 2018 "2.13.0 erroneously requires libuuid on macOS"
-        # See https://bugs.freedesktop.org/show_bug.cgi?id=105366
-        ENV["UUID_CFLAGS"] = " "
-        ENV["UUID_LIBS"] = " "
-
-        # Remove for fontconfig > 2.13.0
-        # Same effect as upstream commit from 10 Mar 2018 "Add uuid to
-        # Requires.private in .pc only when pkgconfig macro found it"
-        inreplace "configure",
-          'PKGCONFIG_REQUIRES_PRIVATELY="$PKGCONFIG_REQUIRES_PRIVATELY uuid"',
-          ""
+        font_dirs = %w[/System/Library/Fonts /Library/Fonts ~/Library/Fonts]
+        if MacOS.version >= :sierra
+          font_dirs << Dir["/System/Library/Assets/com_apple_MobileAsset_Font*"].max
+        end
 
         system "./configure", "--disable-dependency-tracking",
                               "--prefix=#{libexec}",
                               "--disable-static",
-                              "--with-add-fonts=/System/Library/Fonts,/Library/Fonts,~/Library/Fonts",
+                              "--with-add-fonts=#{font_dirs.join(",")}",
                               "--localstatedir=#{var}/vendored_wine_fontconfig",
                               "--sysconfdir=#{prefix}",
                               *depflags
@@ -381,10 +352,7 @@ class Wine < Formula
 
       resource("net-snmp").stage do
         # https://sourceforge.net/p/net-snmp/bugs/2504/
-        ln_s "darwin13.h", "include/net-snmp/system/darwin14.h"
-        ln_s "darwin13.h", "include/net-snmp/system/darwin15.h"
-        ln_s "darwin13.h", "include/net-snmp/system/darwin16.h"
-        ln_s "darwin13.h", "include/net-snmp/system/darwin17.h"
+        ln_s "darwin13.h", "include/net-snmp/system/darwin18.h"
 
         system "./configure", "--disable-debugging",
                               "--prefix=#{libexec}",
@@ -476,7 +444,8 @@ class Wine < Formula
   end
 
   test do
-    assert_equal shell_output("hostname").chomp, shell_output("#{bin}/wine hostname.exe 2>/dev/null").chomp
-    assert_equal shell_output("hostname").chomp, shell_output("#{bin}/wine64 hostname.exe 2>/dev/null").chomp
+    hostname = shell_output("hostname -s").chomp
+    assert_match shell_output("#{bin}/wine hostname.exe 2>/dev/null").chomp, hostname
+    assert_match shell_output("#{bin}/wine64 hostname.exe 2>/dev/null").chomp, hostname
   end
 end

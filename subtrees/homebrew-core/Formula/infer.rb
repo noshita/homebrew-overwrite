@@ -1,9 +1,9 @@
 class Infer < Formula
   desc "Static analyzer for Java, C, C++, and Objective-C"
-  homepage "http://fbinfer.com/"
+  homepage "https://fbinfer.com/"
   # pull from git tag to get submodules
   url "https://github.com/facebook/infer.git",
-      :tag => "v0.15.0",
+      :tag      => "v0.15.0",
       :revision => "8bda23fadcc51c6ed38a4c3a75be25a266e8f7b4"
 
   bottle do
@@ -12,9 +12,6 @@ class Infer < Formula
     sha256 "91c68a2e6487e2218567a2e92c10b76bbfea5c69497b1bd9b027426ed23ec615" => :sierra
     sha256 "8bb9d822db58e8b34e286dbc167c391e497ae5e37d96766ca355dd9bc7e6ec50" => :el_capitan
   end
-
-  option "without-clang", "Build without the C/C++/Objective-C analyzers"
-  option "without-java", "Build without the Java analyzers"
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
@@ -26,16 +23,11 @@ class Infer < Formula
   depends_on "pkg-config" => :build
 
   def install
-    if build.without?("clang") && build.without?("java")
-      odie "infer: --without-clang and --without-java are mutually exclusive"
-    end
+    # needed to build clang
+    ENV.permit_arch_flags
 
-    if build.with?("clang")
-      # needed to build clang
-      ENV.permit_arch_flags
-      # Apple's libstdc++ is too old to build LLVM
-      ENV.libcxx if ENV.compiler == :clang
-    end
+    # Apple's libstdc++ is too old to build LLVM
+    ENV.libcxx if ENV.compiler == :clang
 
     opamroot = buildpath/"opamroot"
     opamroot.mkpath
@@ -44,14 +36,6 @@ class Infer < Formula
 
     # do not attempt to use the clang in facebook-clang-plugins/ as it hasn't been built yet
     ENV["INFER_CONFIGURE_OPTS"] = "--prefix=#{prefix} --without-fcp-clang"
-
-    target_platform = if build.without?("clang")
-      "java"
-    elsif build.without?("java")
-      "clang"
-    else
-      "all"
-    end
 
     llvm_args = %w[
       -DLLVM_INCLUDE_DOCS=OFF
@@ -70,7 +54,7 @@ class Infer < Formula
     # so that `infer --version` reports a release version number
     inreplace "infer/src/base/Version.ml.in", "let is_release = is_yes \"@IS_RELEASE_TREE@\"", "let is_release = true"
     inreplace "facebook-clang-plugins/clang/setup.sh", "CMAKE_ARGS=(", "CMAKE_ARGS=(\n  " + llvm_args.join("\n  ")
-    system "./build-infer.sh", target_platform, "--yes"
+    system "./build-infer.sh", "all", "--yes"
     system "opam", "config", "exec", "--switch=infer-#{ocaml_version}", "--", "make", "install"
   end
 
@@ -100,7 +84,7 @@ class Infer < Formula
     EOS
 
     shell_output("#{bin}/infer --fail-on-issue -- clang -c FailingTest.c", 2)
-    shell_output("#{bin}/infer --fail-on-issue -- clang -c PassingTest.c", 0)
+    shell_output("#{bin}/infer --fail-on-issue -- clang -c PassingTest.c")
 
     (testpath/"FailingTest.java").write <<~EOS
       class FailingTest {
@@ -137,6 +121,6 @@ class Infer < Formula
     EOS
 
     shell_output("#{bin}/infer --fail-on-issue -- javac FailingTest.java", 2)
-    shell_output("#{bin}/infer --fail-on-issue -- javac PassingTest.java", 0)
+    shell_output("#{bin}/infer --fail-on-issue -- javac PassingTest.java")
   end
 end

@@ -3,20 +3,20 @@ class Libvisio < Formula
   homepage "https://wiki.documentfoundation.org/DLP/Libraries/libvisio"
   url "https://dev-www.libreoffice.org/src/libvisio/libvisio-0.1.6.tar.xz"
   sha256 "fe1002d3671d53c09bc65e47ec948ec7b67e6fb112ed1cd10966e211a8bb50f9"
-  revision 3
+  revision 5
 
   bottle do
     cellar :any
-    sha256 "d36591665e4cc9c4af45a9372e0e2749c1beaaf07bcf9783d31c4b305465f2b7" => :high_sierra
-    sha256 "9dc03aaa376fad416fd3f0532640ed974429a7738d69e149daa5cfd590148ea0" => :sierra
-    sha256 "0f4354fe1d3f35c51cdcc66bae90a25c206574305407d102fd82c760def847a0" => :el_capitan
+    sha256 "e8ecfab7bcbb1b4ee5eaa612ae23a867c9ace277d0a5aa0c33d7890124e92f6a" => :mojave
+    sha256 "7a944e774dc590538015498564a1bdd2a58f11435b4069b640b28d1cfd7ba38a" => :high_sierra
+    sha256 "29ca3d3796d23e0cd6435f3de3b445c8f4c8f6cb8e3837b4fd691c92b9169f2c" => :sierra
   end
 
-  depends_on "pkg-config" => :build
   depends_on "cppunit" => :build
+  depends_on "pkg-config" => :build
   depends_on "boost"
-  depends_on "librevenge"
   depends_on "icu4c"
+  depends_on "librevenge"
 
   def install
     # Needed for Boost 1.59.0 compatibility.

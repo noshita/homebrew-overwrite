@@ -1,21 +1,24 @@
 class Vips < Formula
   desc "Image processing library"
-  homepage "https://github.com/jcupitt/libvips"
-  url "https://github.com/jcupitt/libvips/releases/download/v8.6.4/vips-8.6.4.tar.gz"
-  sha256 "4631a080c92b2b371379252e451818604858942b754c924b09843a7f528a8af4"
+  homepage "https://github.com/libvips/libvips"
+  url "https://github.com/libvips/libvips/releases/download/v8.7.4/vips-8.7.4.tar.gz"
+  sha256 "ce7518a8f31b1d29a09b3d7c88e9852a5a2dcb3ee1501524ab477e433383f205"
+  revision 1
 
   bottle do
-    sha256 "e0ae4bd9399cab21063048cdea3c2d2230f0ef545548d83df16706970d136852" => :high_sierra
-    sha256 "59a6d27c07630775bee1d28385d23de06877faeec2791859591d290048f58c50" => :sierra
-    sha256 "3a6aeb51bb03ebefcc32763ad69527af6c08b3f0f128e42db16a86bf987aab81" => :el_capitan
+    sha256 "b79a1dd2a31c66ccaef76c1a80b45fed626070892170fb6b2d17fc77aae2169d" => :mojave
+    sha256 "5b0e853a2df0f58a23fc050727293b4c8a3157b6d162f5d42b1c83d0d26da21c" => :high_sierra
+    sha256 "4d3c4c02757bad0508029fb491331fb8a5217af2852e4a52811ed911326e8438" => :sierra
   end
 
+  depends_on "gobject-introspection" => :build
   depends_on "pkg-config" => :build
+  depends_on "fftw"
   depends_on "fontconfig"
   depends_on "gettext"
   depends_on "giflib"
   depends_on "glib"
-  depends_on "gobject-introspection"
+  depends_on "imagemagick"
   depends_on "jpeg"
   depends_on "libexif"
   depends_on "libgsf"
@@ -23,34 +26,19 @@ class Vips < Formula
   depends_on "librsvg"
   depends_on "libtiff"
   depends_on "little-cms2"
+  depends_on "openexr"
+  depends_on "openslide"
   depends_on "orc"
   depends_on "pango"
-  depends_on "pygobject3"
+  depends_on "poppler"
   depends_on "webp"
-  depends_on "fftw" => :recommended
-  depends_on "graphicsmagick" => :recommended
-  depends_on "poppler" => :recommended
-  depends_on "imagemagick" => :optional
-  depends_on "openexr" => :optional
-  depends_on "openslide" => :optional
-
-  if build.with?("graphicsmagick") && build.with?("imagemagick")
-    odie "vips: --with-imagemagick requires --without-graphicsmagick"
-  end
 
   def install
     args = %W[
       --disable-dependency-tracking
       --prefix=#{prefix}
-      --enable-pyvips8
-      PYTHON=#{Formula["python"].opt_bin}/python3
+      --with-magick
     ]
-
-    if build.with? "graphicsmagick"
-      args << "--with-magick" << "--with-magickpackage=GraphicsMagick"
-    elsif build.with? "imagemagick"
-      args << "--with-magick"
-    end
 
     system "./configure", *args
     system "make", "install"

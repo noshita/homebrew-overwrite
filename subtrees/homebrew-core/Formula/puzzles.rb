@@ -2,25 +2,23 @@ class Puzzles < Formula
   desc "Collection of one-player puzzle games"
   homepage "https://www.chiark.greenend.org.uk/~sgtatham/puzzles/"
   # Extract https://www.chiark.greenend.org.uk/~sgtatham/puzzles/puzzles.tar.gz to get the version number
-  url "https://www.chiark.greenend.org.uk/~sgtatham/puzzles/puzzles-20180602.5a697b3.tar.gz"
-  version "20180602"
-  sha256 "b865a31efd5eb4caf5ad12e7f2c2a21897064d889b8c6cdac0c6cad45fcd54f6"
-
+  url "https://www.chiark.greenend.org.uk/~sgtatham/puzzles/puzzles-20181213.ced51ad.tar.gz"
+  version "20181213"
+  sha256 "af6f4a5e24ed5e45f5970094861baaca968b465800618a27add54b007846d677"
   head "https://git.tartarus.org/simon/puzzles.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "d3b1c160953b815033d4cba3bab1e8b005f592e11b26ce0faf17d938f175af9b" => :high_sierra
-    sha256 "9021de59633ecbcd09c21780397ec15b6c9c93ef86904f4fd73a144ac5805f99" => :sierra
-    sha256 "5bf5d6a9c0c68f1ee5e13734141a51a028c931f32a581424c2a6eb3817606207" => :el_capitan
+    sha256 "6c9074c13804af872034dfe44ecef1981c2ecd2f889e2321c285e29c5b5f44ba" => :mojave
+    sha256 "3295675cb50bc1a1e4be0e3e58bc7841d85ff91a9cb3bcf30a034cfcc653239a" => :high_sierra
+    sha256 "44bcf61171a8968e2eaa76f178f713ee74fda0922ad41aa1cc431631992ac456" => :sierra
   end
 
   depends_on "halibut"
 
   def install
-    # Prevent "lipo: Puzzles.i386.bin and Puzzles.x86_64.bin have the same
-    # architectures (x86_64) and can't be in the same fat output file"
-    ENV.permit_arch_flags
+    # Do not build for i386
+    inreplace "mkfiles.pl", /@osxarchs = .*/, "@osxarchs = ('x86_64');"
 
     system "perl", "mkfiles.pl"
     system "make", "-d", "-f", "Makefile.osx", "all"

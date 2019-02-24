@@ -3,31 +3,22 @@ class Mkdocs < Formula
 
   desc "Project documentation with Markdown"
   homepage "https://www.mkdocs.org/"
-  url "https://github.com/mkdocs/mkdocs/archive/0.17.4.tar.gz"
-  sha256 "62ee3686dcfb999b3b743632596df62cbd94b1ab80a28044cabcc22dc51c8471"
+  url "https://github.com/mkdocs/mkdocs/archive/1.0.4.tar.gz"
+  sha256 "c9a0e1637c1e92b663d290a74ed1370ee7d50c6af165f49215df3a0c10b5bafa"
+  revision 1
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "5662a5516e8ea10e00ccd8ecaaa074b2394dd0dd53c6364e0679486f473e45f9" => :high_sierra
-    sha256 "0216a082a0038c72bbde01841df0cf69030cbc831dd156e554c47c362c257edc" => :sierra
-    sha256 "0b4e5e1c3740b7481a7ced6f49d621a9c58e96c192b103568ecac430da0fa9ed" => :el_capitan
+    sha256 "fa6aae95e082beaaab49e39298be6612e0d9f0d9bee2f6d328f0aebdaac90868" => :mojave
+    sha256 "f74b98c684abbede806343fc573b80bf3bd7ed31b20a6df0ee97a48c89259fc9" => :high_sierra
+    sha256 "ec14bfa77ebb331e8d24e345825f3eff934709ed46f2a3f30f990dfd63654969" => :sierra
   end
 
-  depends_on "python@2"
-
-  resource "backports_abc" do
-    url "https://files.pythonhosted.org/packages/68/3c/1317a9113c377d1e33711ca8de1e80afbaf4a3c950dd0edfaf61f9bfe6d8/backports_abc-0.5.tar.gz"
-    sha256 "033be54514a03e255df75c5aee8f9e672f663f93abb723444caec8fe43437bde"
-  end
-
-  resource "certifi" do
-    url "https://files.pythonhosted.org/packages/4d/9c/46e950a6f4d6b4be571ddcae21e7bc846fcbb88f1de3eff0f6dd0a6be55d/certifi-2018.4.16.tar.gz"
-    sha256 "13e698f54293db9f89122b0581843a782ad0934a4fe0172d2a980ba77fc61bb7"
-  end
+  depends_on "python"
 
   resource "click" do
-    url "https://files.pythonhosted.org/packages/95/d9/c3336b6b5711c3ab9d1d3a80f1a3e2afeb9d8c02a7166462f6cc96570897/click-6.7.tar.gz"
-    sha256 "f15516df478d5a56180fbf80e68f206010e6d160fc39fa508b65e035fd75130b"
+    url "https://files.pythonhosted.org/packages/f8/5c/f60e9d8a1e77005f664b76ff8aeaee5bc05d0a91798afd7f53fc998dbc47/Click-7.0.tar.gz"
+    sha256 "5b94b49521f6456670fdb30cd82a4eca9412788a93fa6dd6df72c94d5a8ff2d7"
   end
 
   resource "Jinja2" do
@@ -41,8 +32,8 @@ class Mkdocs < Formula
   end
 
   resource "Markdown" do
-    url "https://files.pythonhosted.org/packages/b3/73/fc5c850f44af5889192dff783b7b0d8f3fe8d30b65c8e3f78f8f0265fecf/Markdown-2.6.11.tar.gz"
-    sha256 "a856869c7ff079ad84a3e19cd87a64998350c2b94e9e08e44270faef33400f81"
+    url "https://files.pythonhosted.org/packages/3c/52/7bae9e99a7a4be6af4a713fe9b692777e6468d28991c54c273dfb6ec9fb2/Markdown-3.0.1.tar.gz"
+    sha256 "d02e0f9b04c500cde6637c11ad7c72671f359b87b9fe924b2383649d8841db7c"
   end
 
   resource "MarkupSafe" do
@@ -51,8 +42,8 @@ class Mkdocs < Formula
   end
 
   resource "PyYAML" do
-    url "https://files.pythonhosted.org/packages/4a/85/db5a2df477072b2902b0eb892feb37d88ac635d36245a72a6a69b23b383a/PyYAML-3.12.tar.gz"
-    sha256 "592766c6303207a20efc445587778322d7f73b161bd994f227adaa341ba212ab"
+    url "https://files.pythonhosted.org/packages/9e/a3/1d13970c3f36777c583f136c136f804d70f500168edc1edea6daa7200769/PyYAML-3.13.tar.gz"
+    sha256 "3ef3092145e9b70e3ddd2c7ad59bdd0252a94dfe3949721633e41344de00a6bf"
   end
 
   resource "singledispatch" do
@@ -66,8 +57,8 @@ class Mkdocs < Formula
   end
 
   resource "tornado" do
-    url "https://files.pythonhosted.org/packages/e3/7b/e29ab3d51c8df66922fea216e2bddfcb6430fb29620e5165b16a216e0d3c/tornado-4.5.3.tar.gz"
-    sha256 "6d14e47eab0e15799cf3cdcc86b0b98279da68522caace2bd7ce644287685f0a"
+    url "https://files.pythonhosted.org/packages/e6/78/6e7b5af12c12bdf38ca9bfe863fcaf53dc10430a312d0324e76c1e5ca426/tornado-5.1.1.tar.gz"
+    sha256 "4e5158d97583502a7e2739951553cbd88a72076f152b4b11b64b9a10c4c49409"
   end
 
   def install
@@ -78,7 +69,7 @@ class Mkdocs < Formula
     # build a very simple site that uses the "readthedocs" theme.
     (testpath/"mkdocs.yml").write <<~EOS
       site_name: MkLorum
-      pages:
+      nav:
         - Home: index.md
       theme: readthedocs
     EOS

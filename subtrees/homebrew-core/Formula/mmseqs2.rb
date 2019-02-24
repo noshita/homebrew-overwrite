@@ -1,15 +1,15 @@
 class Mmseqs2 < Formula
   desc "Software suite for very fast protein sequence search and clustering"
   homepage "https://mmseqs.org/"
-  url "https://github.com/soedinglab/MMseqs2/archive/3-be8f6.tar.gz"
-  version "3-be8f6"
-  sha256 "7502adcec9f84c560996ced29edec88ce8ec47670da7dae6c7ee50d7b849fe0d"
+  url "https://github.com/soedinglab/MMseqs2/archive/7-4e23d.tar.gz"
+  version "7-4e23d"
+  sha256 "39b04ea60741ca209c37be129b852b5024fed1691817e6eb1e80e382f7261724"
 
   bottle do
     cellar :any
-    sha256 "0a2bc5f422c1fba52f2e20e3c27559c086bd4f1a652739c32840a730bbcac30e" => :high_sierra
-    sha256 "3e0fb89409e53fbef476d40296f35cae6d36018691eb0f72278affb4b8154f23" => :sierra
-    sha256 "ecb8fba6928eaf995c8176dcdb44cf13adc0a823b4183ecfe633faf57cc9520c" => :el_capitan
+    sha256 "e90c697974e8bfac9ab2cba1c25521de6d8967f42c4191f5f53fb97809fce4e3" => :mojave
+    sha256 "3d65ac201907466812a84eba4e5cbd65e9921844b20d611b89ee4dadcd748529" => :high_sierra
+    sha256 "e27970a0d1e68e4385dd0aa29a0d91a62d297b4879a12ea5a512ac2356b333a7" => :sierra
   end
 
   depends_on "cmake" => :build
@@ -21,14 +21,13 @@ class Mmseqs2 < Formula
 
   resource "documentation" do
     url "https://github.com/soedinglab/MMseqs2.wiki.git",
-        :revision => "f6b31176d50402ce6070c9557a476e06a872d2ae"
+        :revision => "d3607c7913e67c7bb553a8dff0cc66eeb3387506"
   end
 
   def install
     args = *std_cmake_args << "-DHAVE_TESTS=0" << "-DHAVE_MPI=0"
     args << "-DVERSION_OVERRIDE=#{version}"
-
-    args << "-DHAVE_SSE4_1=1" if build.bottle?
+    args << "-DHAVE_SSE4_1=1"
 
     system "cmake", ".", *args
     system "make", "install"
@@ -40,7 +39,7 @@ class Mmseqs2 < Formula
 
   def caveats
     unless Hardware::CPU.sse4?
-      "MMseqs2 requires at least SSE4.1 CPU instruction support. The binary will not work correctly."
+      "MMseqs2 requires at least SSE4.1 CPU instruction support."
     end
   end
 

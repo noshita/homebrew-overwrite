@@ -1,39 +1,38 @@
 class GnomeBuilder < Formula
   desc "IDE for GNOME"
   homepage "https://wiki.gnome.org/Apps/Builder"
-  url "https://download.gnome.org/sources/gnome-builder/3.28/gnome-builder-3.28.2.tar.xz"
-  sha256 "398baaf8b14407a666b9d9eddbe9bde0812a86479f534085080149bd3271372e"
+  url "https://download.gnome.org/sources/gnome-builder/3.28/gnome-builder-3.28.4.tar.xz"
+  sha256 "05281f01e66fde8fcd89af53709053583cf74d0ae4ac20b37185664f25396b45"
 
   bottle do
-    sha256 "8cfc8d3e17e341c0b40a43967f3908f7fecd4d2488f99c8cad2fd73e0c49df4e" => :high_sierra
-    sha256 "acfaf7f5b87851c9ed6aaa4d929c0baec657490140fdc991362b651b197a85f5" => :sierra
-    sha256 "fe2c92cf12c1ae1870ff86a2e84cba7e82fef49ccdffd2d982d98347644d473f" => :el_capitan
+    sha256 "1bde6ecb92fb4a42b3de47323b4efe1a5234aee985f40721e0bc9b59b8a7e839" => :mojave
+    sha256 "b2068860adae8eee244a324fba083aa3bfdefef7962c894c320741802f199ad3" => :high_sierra
+    sha256 "f0f008cab0a9c58973980c8386b9bf76e1305aa8d934d98b5916b861251fc87d" => :sierra
+    sha256 "4845a2b8a31cd6eeca400f5216aa806a3521f4640ddf6957de89646cc86abe06" => :el_capitan
   end
 
   depends_on "gobject-introspection" => :build
-  depends_on "pkg-config" => :build
   depends_on "meson-internal" => :build
   depends_on "ninja" => :build
+  depends_on "pkg-config" => :build
   depends_on "python" => :build
+  depends_on "adwaita-icon-theme"
   depends_on "dbus"
+  depends_on "gspell"
   depends_on "gtk+3"
-  depends_on "libdazzle"
   depends_on "gtksourceview3"
+  depends_on "hicolor-icon-theme"
   depends_on "json-glib"
   depends_on "jsonrpc-glib"
-  depends_on "template-glib"
-  depends_on "libpeas"
-  depends_on "vte3"
-  depends_on "libxml2"
+  depends_on "libdazzle"
   depends_on "libgit2-glib"
-  depends_on "gspell"
-  depends_on "hicolor-icon-theme"
-  depends_on "adwaita-icon-theme"
+  depends_on "libpeas"
+  depends_on "libxml2"
+  depends_on "template-glib"
+  depends_on "vte3"
 
   # fix sandbox violation and remove unavailable linker option
   patch :DATA
-
-  needs :cxx11
 
   def install
     ENV.cxx11

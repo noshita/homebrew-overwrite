@@ -1,26 +1,30 @@
 class Urh < Formula
   desc "Universal Radio Hacker"
   homepage "https://github.com/jopohl/urh"
-  url "https://files.pythonhosted.org/packages/58/ad/473e532a9dff92faf0027fbfaa4ac36abe7dc65c3efcd7cc73e4b89007c1/urh-2.1.1.tar.gz"
-  sha256 "fd66d3f3c054eb9ebef62425cc5289627b93b19e3d9cd155ed02866660c06228"
+  url "https://files.pythonhosted.org/packages/81/29/8ffecf5a0d99bef5a4463fd9dbea537e119562737aaac10b1997da135d5d/urh-2.2.3.tar.gz"
+  sha256 "9867398e94b1c05a227fa2a5765cfbf7fda6327600a2e50f612988063d05ee1d"
+  revision 3
   head "https://github.com/jopohl/urh.git"
 
   bottle do
-    sha256 "a5623c061b8ea0b821b295322403361e1ed5500cd4fcde62757ec98e8cb25193" => :high_sierra
-    sha256 "89d711d90dea599fe08b5c4dbc66808cc26f2cff8a15a9e075b4dc560c524c16" => :sierra
-    sha256 "f08c53ebbf56fde9fdbcfad22432df286e83820ad04453df2b438d14e1f8d2ad" => :el_capitan
+    cellar :any
+    rebuild 1
+    sha256 "6c3adad798551c02d0f032bb4aa605ee9aa5fe6e3bc1545b66d2314f34645712" => :mojave
+    sha256 "02b56d2752c2e3f972c24cf08ef6d516ffd5f82b191834e27be1e61f369b6f32" => :high_sierra
+    sha256 "26a380a8bc363c10c56ce1aaf7662c876f67700b80c02b64390ed84c1d6565fe" => :sierra
   end
 
-  option "with-hackrf", "Build with libhackrf support"
-
   depends_on "pkg-config" => :build
-
+  depends_on "hackrf"
   depends_on "numpy"
-  depends_on "python"
   depends_on "pyqt"
+  depends_on "python"
   depends_on "zeromq"
 
-  depends_on "hackrf" => :optional
+  resource "Cython" do
+    url "https://files.pythonhosted.org/packages/d2/12/8ef44cede251b93322e8503fd6e1b25a0249fa498bebec191a5a06adbe51/Cython-0.28.4.tar.gz"
+    sha256 "76ac2b08d3d956d77b574bb43cbf1d37bd58b9d50c04ba281303e695854ebc46"
+  end
 
   resource "psutil" do
     url "https://files.pythonhosted.org/packages/51/9e/0f8f5423ce28c9109807024f7bdde776ed0b1161de20b408875de7e030c3/psutil-5.4.6.tar.gz"
@@ -28,8 +32,8 @@ class Urh < Formula
   end
 
   resource "pyzmq" do
-    url "https://files.pythonhosted.org/packages/9f/f6/85a33a25128a4a812c3482547e3d458eebdb19ee0b4699f9199cdb2ad731/pyzmq-17.0.0.tar.gz"
-    sha256 "0145ae59139b41f65e047a3a9ed11bbc36e37d5e96c64382fcdff911c4d8c3f0"
+    url "https://files.pythonhosted.org/packages/aa/fd/f2e65a05558ff8b58b71404efc79c2b03cef922667260e1d703896597b93/pyzmq-17.1.0.tar.gz"
+    sha256 "2199f753a230e26aec5238b0518b036780708a4c887d4944519681a920b9dee4"
   end
 
   def install
@@ -41,16 +45,25 @@ class Urh < Formula
     xy = Language::Python.major_minor_version "python3"
     ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python#{xy}/site-packages"
     resources.each do |r|
+      next if r.name == "Cython"
+
       r.stage do
         system "python3", *Language::Python.setup_install_args(libexec/"vendor")
       end
     end
 
     ENV.prepend_create_path "PYTHONPATH", libexec/"lib/python#{xy}/site-packages"
+    saved_python_path = ENV["PYTHONPATH"]
+    ENV.prepend_create_path "PYTHONPATH", buildpath/"cython/lib/python#{xy}/site-packages"
+
+    resource("Cython").stage do
+      system "python3", *Language::Python.setup_install_args(buildpath/"cython")
+    end
+
     system "python3", *Language::Python.setup_install_args(libexec)
 
     bin.install Dir[libexec/"bin/*"]
-    bin.env_script_all_files(libexec/"bin", :PYTHONPATH => ENV["PYTHONPATH"])
+    bin.env_script_all_files(libexec/"bin", :PYTHONPATH => saved_python_path)
   end
 
   test do

@@ -3,23 +3,28 @@ class SvtplayDl < Formula
 
   desc "Download videos from https://www.svtplay.se/"
   homepage "https://svtplay-dl.se/"
-  url "https://files.pythonhosted.org/packages/ba/ef/fffb99eec8aa8b8eaa989dbb5158a55f3cb0adccdde5c05e1708bb22cb7f/svtplay-dl-1.9.11.tar.gz"
-  sha256 "3ece5ba28cbdf65490169b8c13fa17b2ba531e7b9a8137f0700b569cbd8e21c2"
+  url "https://files.pythonhosted.org/packages/1f/95/5ef43ad627206dbfbca43e377a855a37aa8d005f136ff43974ba6b30fd3e/svtplay-dl-2.1.tar.gz"
+  sha256 "acac0cb6435e3243b98b154958d799cbb65b64335cd0e2bfb1ae0a81b640c17c"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "08152f1fa8a69f00d1ab5395ff56c2acd95158dd510c9a9466d3c91fe587dcb5" => :high_sierra
-    sha256 "1459efa77e0c4ba52ca8be3f24457f32f25933311d8aebe365340381a170d46b" => :sierra
-    sha256 "689675a28ef799324c2ca527ff70a089251314d42a2a0c7b7ee6e1b050da56dd" => :el_capitan
+    sha256 "85060c9198141d0c704d33dc40478245b0c6acca2ec0a0ab6a98395a8ee11b1c" => :mojave
+    sha256 "6aadadb0d4b41e792d67f833997d667844bcd41bed1d867f9f8e6207912dad04" => :high_sierra
+    sha256 "b73aadf29b0db1d2eee80d9659c1c51651911a18363a1104ff4995ee48520034" => :sierra
   end
 
   depends_on "openssl"
-  depends_on "python@2"
+  depends_on "python"
   depends_on "rtmpdump"
 
+  resource "pycryptodome" do
+    url "https://files.pythonhosted.org/packages/46/57/3901d4d3c03c3a7cefc570c01dfca3ec5eb086fc6e918b4aa451cb63fcdf/pycryptodome-3.7.0.tar.gz"
+    sha256 "4444a26fc3830c0d438bca6975ff10d1eb9c0b88f747fdc25b5ab81fb46713d7"
+  end
+
   resource "certifi" do
-    url "https://files.pythonhosted.org/packages/15/d4/2f888fc463d516ff7bf2379a4e9a552fef7f22a94147655d9b1097108248/certifi-2018.1.18.tar.gz"
-    sha256 "edbc3f203427eef571f79a7692bb160a2b0f7ccaa31953e99bd17e307cf63f7d"
+    url "https://files.pythonhosted.org/packages/41/b6/4f0cefba47656583217acd6cd797bc2db1fede0d53090fdc28ad2c8e0716/certifi-2018.10.15.tar.gz"
+    sha256 "6d58c986d22b038c8c0df30d639f23a3e6d172a05c3583e766f4c0b785c0986a"
   end
 
   resource "chardet" do
@@ -28,13 +33,8 @@ class SvtplayDl < Formula
   end
 
   resource "idna" do
-    url "https://files.pythonhosted.org/packages/f4/bd/0467d62790828c23c47fc1dfa1b1f052b24efdf5290f071c7a91d0d82fd3/idna-2.6.tar.gz"
-    sha256 "2c6a5de3089009e3da7c5dde64a141dbc8551d5b7f6cf4ed7c2568d0cc520a8f"
-  end
-
-  resource "pycrypto" do
-    url "https://files.pythonhosted.org/packages/60/db/645aa9af249f059cc3a368b118de33889219e0362141e75d4eaf6f80f163/pycrypto-2.6.1.tar.gz"
-    sha256 "f2ce1e989b272cfcb677616763e0a2e7ec659effa67a88aa92b3a65528f60a3c"
+    url "https://files.pythonhosted.org/packages/65/c4/80f97e9c9628f3cac9b98bfca0402ede54e0563b56482e3e6e45c43c4935/idna-2.7.tar.gz"
+    sha256 "684a38a6f903c1d71d6d5fac066b58d7768af4de2b832e426ec79c30daa94a16"
   end
 
   resource "PySocks" do
@@ -43,13 +43,18 @@ class SvtplayDl < Formula
   end
 
   resource "requests" do
-    url "https://files.pythonhosted.org/packages/b0/e1/eab4fc3752e3d240468a8c0b284607899d2fbfb236a56b7377a329aa8d09/requests-2.18.4.tar.gz"
-    sha256 "9c443e7324ba5b85070c4a818ade28bfabedf16ea10206da1132edaa6dda237e"
+    url "https://files.pythonhosted.org/packages/97/10/92d25b93e9c266c94b76a5548f020f3f1dd0eb40649cb1993532c0af8f4c/requests-2.20.0.tar.gz"
+    sha256 "99dcfdaaeb17caf6e526f32b6a7b780461512ab3f1d992187801694cba42770c"
   end
 
   resource "urllib3" do
-    url "https://files.pythonhosted.org/packages/ee/11/7c59620aceedcc1ef65e156cc5ce5a24ef87be4107c2b74458464e437a5d/urllib3-1.22.tar.gz"
-    sha256 "cc44da8e1145637334317feebd728bd869a35285b93cbb4cca2577da7e62db4f"
+    url "https://files.pythonhosted.org/packages/b1/53/37d82ab391393565f2f831b8eedbffd57db5a718216f82f1a8b4d381a1c1/urllib3-1.24.1.tar.gz"
+    sha256 "de9529817c93f27c8ccbfead6985011db27bd0ddfcdb2d86f3f663385c6a9c22"
+  end
+
+  resource "pyyaml" do
+    url "https://files.pythonhosted.org/packages/9e/a3/1d13970c3f36777c583f136c136f804d70f500168edc1edea6daa7200769/PyYAML-3.13.tar.gz"
+    sha256 "3ef3092145e9b70e3ddd2c7ad59bdd0252a94dfe3949721633e41344de00a6bf"
   end
 
   def install
@@ -64,6 +69,11 @@ class SvtplayDl < Formula
 
   test do
     url = "https://tv.aftonbladet.se/abtv/articles/244248"
-    assert_match "No videos found", shell_output("#{bin}/svtplay-dl -g #{url}")
+    match = <<~EOS
+      https://absvpvod-vh.akamaihd.net/i/2018/02/cdaefe0533c2561f00a41c52a2d790bd
+      /,1280_720_2800,960_540_1500,640_360_800,480_270_300,.mp4.csmil
+      /index_0_av.m3u8
+    EOS
+    assert_match match.delete!("\n"), shell_output("#{bin}/svtplay-dl -g #{url}")
   end
 end

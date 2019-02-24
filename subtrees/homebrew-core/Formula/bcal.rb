@@ -1,14 +1,14 @@
 class Bcal < Formula
   desc "Storage conversion and expression calculator"
   homepage "https://github.com/jarun/bcal"
-  url "https://github.com/jarun/bcal/archive/v1.9.tar.gz"
-  sha256 "5d075deaef087680ea4c153ed5f0696f8be149a59ce0e5aaeb3f5b1180b2ec81"
+  url "https://github.com/jarun/bcal/archive/v2.1.tar.gz"
+  sha256 "c0b6cb911a773abdd555e6a9e0eb8a25934ceca038156e6250e117fa451beaa6"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "3c00afb8282817dbd475d0611972a67583e38b61aba69197c754443a1c65c2fc" => :high_sierra
-    sha256 "1a192e98388164010d63d19f9f858bc6c60473ce0abe1b3aea21130f5b2f366d" => :sierra
-    sha256 "4b75a0f2083440568deecc1328a1106617f8dbd3342a558e755109b00aa6fbfc" => :el_capitan
+    sha256 "ceb385dfbcab9d34a2c54655729f934edf6ccc0eb135ba0cd580f9c384e64629" => :mojave
+    sha256 "fc9abe164d34c568d66589d0cbeb1268044e763d6d6d93212badf10d5701aa04" => :high_sierra
+    sha256 "5564379751e03bc62269e9edc689089713ca9a5d8113e0f33ea4ff8c83406427" => :sierra
   end
 
   def install

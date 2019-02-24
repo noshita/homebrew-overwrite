@@ -1,35 +1,35 @@
 class Gedit < Formula
   desc "The GNOME text editor"
   homepage "https://wiki.gnome.org/Apps/Gedit"
-  url "https://download.gnome.org/sources/gedit/3.28/gedit-3.28.1.tar.xz"
-  sha256 "f174be0958ce63771fef9a81d06da6769358dab8705364a6abb5c7d10ec8211d"
+  url "https://download.gnome.org/sources/gedit/3.30/gedit-3.30.2.tar.xz"
+  sha256 "eaf3b17856a0fb7c6f363c2ebbf4f26c5be6eb6552a49e58c44aee0fcb789163"
 
   bottle do
-    sha256 "d13c0a492327dcb25d501310572e496594cfbd1e0bd204a806b829a22ff689a5" => :high_sierra
-    sha256 "98f28fd13d07188e0c81d839797cef91ac4d629feb75442afc8671a7c8464a00" => :sierra
-    sha256 "98abdcb202c3d289de4a16d7a55b2a4cf1cf8be55a3253718524e2aec78cb6c1" => :el_capitan
+    sha256 "14c51fd7413b03c98f4f44d22c5218266a27c662f4df9e74b3206aa4a6f72e1a" => :mojave
+    sha256 "a4d83117fd6c3b2b5a2d240fd3aa774c3ce830df09143b14f2b2dda566565d3a" => :high_sierra
+    sha256 "fde3d49600a69e62507ed9b6fc49771fcbf431eb6ee348c43be12847fc067669" => :sierra
   end
 
-  depends_on "pkg-config" => :build
-  depends_on "vala" => :build
   depends_on "intltool" => :build
   depends_on "itstool" => :build
+  depends_on "pkg-config" => :build
+  depends_on "vala" => :build
+  depends_on "adwaita-icon-theme"
   depends_on "atk"
   depends_on "cairo"
   depends_on "gdk-pixbuf"
   depends_on "gettext"
   depends_on "glib"
-  depends_on "pango"
+  depends_on "gobject-introspection"
+  depends_on "gsettings-desktop-schemas"
+  depends_on "gspell"
   depends_on "gtk+3"
   depends_on "gtk-mac-integration"
-  depends_on "gobject-introspection"
-  depends_on "gspell"
-  depends_on "iso-codes"
-  depends_on "libxml2"
-  depends_on "libpeas"
   depends_on "gtksourceview3"
-  depends_on "gsettings-desktop-schemas"
-  depends_on "adwaita-icon-theme"
+  depends_on "iso-codes"
+  depends_on "libpeas"
+  depends_on "libxml2"
+  depends_on "pango"
 
   def install
     system "./configure", "--disable-dependency-tracking",

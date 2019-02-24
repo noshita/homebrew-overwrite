@@ -7,6 +7,7 @@ class Offlineimap < Formula
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "9461f9ecc12eb7c670a2aca93c27c0aaae2946b1d714b60d49ab53e1b72c4caa" => :mojave
     sha256 "7156fab97be5a48067ca0c0ff713bc283fc0f1542f00842ed214d2cdbd54d7d3" => :high_sierra
     sha256 "7156fab97be5a48067ca0c0ff713bc283fc0f1542f00842ed214d2cdbd54d7d3" => :sierra
     sha256 "7156fab97be5a48067ca0c0ff713bc283fc0f1542f00842ed214d2cdbd54d7d3" => :el_capitan
@@ -15,7 +16,7 @@ class Offlineimap < Formula
   depends_on "asciidoc" => :build
   depends_on "docbook-xsl" => :build
   depends_on "sphinx-doc" => :build
-  depends_on "python@2"
+  depends_on "python@2" # does not support Python 3
 
   resource "six" do
     url "https://files.pythonhosted.org/packages/16/d8/bc6316cf98419719bd59c91742194c111b6f2e85abac88e496adefaf7afe/six-1.11.0.tar.gz"
